@@ -348,6 +348,12 @@ if( ! function_exists('getCategory')){
         $query = $db->get('tbl_category');
         $result = $query->result();
         return $result[0]->category_title;
+		if ($result) {
+			 return $result[0]->category_title;
+		}
+		else {
+			return '';
+		}
     }
 }
 
@@ -358,7 +364,13 @@ if( ! function_exists('getOptions')){
         $db =& DB();
         $query = $db->get_where('tbl_options',array('options_id' => $value,'label_id' => $label));
         $result = $query->result();
-        return $result[0]->options_title;
+		if ($result) {
+			 return $result[0]->options_title;
+		}
+		else {
+			return '';
+		}
+       
     }
 }
 if( ! function_exists('generateNameLabel')){
