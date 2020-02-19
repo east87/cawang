@@ -44,7 +44,7 @@
                         <div class="navbar-collapse collapse" id="navbar-collapse-toggle-1">
                             <ul id="accordion" class="nav navbar-nav no-margin alt-font text-normal" data-in="fadeIn" data-out="fadeOut">
                                 <!-- Cawang -->
-                                 <li class="margin-5px-left dropdown megamenu-fw">
+                                 <li class="<?php if($menu_id == '1') echo 'active'; ?> margin-5px-left dropdown megamenu-fw">
                                     <a href="#">Cawang</a><i class="fas fa-angle-down dropdown-toggle" data-toggle="dropdown" aria-hidden="true"></i>
                                     <!-- start sub menu -->
                                     <div class="menu-back-div dropdown-menu megamenu-content mega-menu collapse mega-menu-full">
@@ -100,7 +100,7 @@
                                     </div>
                                 </li>
                                 <!-- Product-->
-                               <li class="margin-5px-left dropdown megamenu-fw mt-xs-10">
+                               <li class="<?php if($menu_id == '2') echo 'active'; ?> margin-5px-left dropdown megamenu-fw mt-xs-10">
                                     <a href="#">Produk</a><i class="fas fa-angle-down dropdown-toggle" data-toggle="dropdown" aria-hidden="true"></i>
                                   <!-- start sub menu -->
                                     <div class="menu-back-div dropdown-menu megamenu-content mega-menu collapse mega-menu-full">
@@ -194,7 +194,7 @@
                                                 <!-- start sub menu item  -->
                                                 <ul>
                                                     <li class="dropdown-header margin-20px-top">
-                                                        <a href="<?= BASE_URL?>/products/1" class="pl-0 text-uppercase">
+                                                        <a href="<?= BASE_URL?>/home#lokasi" class="pl-0 text-uppercase">
                                                         <span class="decoration-underline alt-font font-weight-600">Beli Produk</span>
                                                         <span class="separator-line-horrizontal-medium-light2 bg-extra-medium-gray d-table mx-auto width-100px"></span>   
                                                         </a>
@@ -220,10 +220,10 @@
                                     </div>
                                 </li>
                                  <!-- Hubungi -->
-                                 <li class="margin-5px-left" style="display: none">
+                                 <li class="<?php if($menu_id == '3') echo 'active'; ?> margin-5px-left" style="display: none">
                                      <a href="#">Tips & Trik</a>
                                  </li>
-                                 <li class="margin-5px-left">
+                                 <li class="<?php if($menu_id == '4') echo 'active'; ?> margin-5px-left">
                                      <a href="<?= BASE_URL?>/contact">Hubungi Kami</a>
                                  </li>
                                 <li class="margin-30px-left">

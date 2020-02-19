@@ -58,11 +58,11 @@
     </head>
     <body>
        
-    <section class="wow fadeIn padding-10px-all" style="">
+<section class="wow fadeIn padding-50px-all" style="">
             <div class="container">
                 <div class="row flex-lg-row-reverse"> 
                 
-               <main class="col-xs-12 col-lg-9 left-sidebar pr-0 md-no-padding-left">
+               <main class="col-12 col-lg-9 left-sidebar md-margin-60px-bottom sm-margin-40px-bottom pr-0 md-no-padding-left">
                      <div id="map" class="col-12 w-100 h-100">
                             
                     </div>
@@ -74,7 +74,7 @@
                      <div class="d-inline-block width-100 margin-15px-tb">
                          <label class="text-small">Temukan Kami di</label>
                             <div class="position-relative">
-                                    <input id="input-search" type="text" class="bg-transparent text-small m-0 border-color-extra-light-gray medium-input float-left" placeholder="Cari lokasi...">                                   
+                                    <input id="input-search" type="text" class="bg-transparent text-small m-0 border-color-extra-light-gray medium-input float-left" placeholder="Enter your keywords...">                                   
                                     <button id="submit-search" type="submit" class="search-btn bg-primary btn position-absolute right-0 top-1"><i class="fas fa-search no-margin-left"></i></button>
                             </div> 
                         </div>
@@ -83,7 +83,7 @@
                             <ul class="latest-post position-relative scroll-style" id="myDIV">
                                 <?php foreach ($ListMaps as $lp) {?>
                                 <li class="media " id="linkbtn<?=$lp['row_id'];?>">
-                                    <div class="col-10">
+                                    <div class="col-6">
                                      <a class="media-body text-small" 
                                        data-id="<?=$lp['row_id'];?>" 
                                        data-title="<?= strtoupper(contentValue($lp, 'title'));?>" 
@@ -94,12 +94,12 @@
                                        data-cat="<?=contentValue($lp, 'category');?>"
                                        data-dir="<?=contentValue($lp, 'direction');?>"
                                        onclick="setMap(this);">                      
-                                        <span class="d-block text-extra-dark-gray alt-font margin-5px-bottom"><?= html_entity_decode(contentValue($lp, 'title'));?></span> 
-                                        <span class="d-block text-extra-small"><?= html_entity_decode(contentValue($lp, 'desc'));?></span>
+                                        <span class="d-block margin-5px-bottom"><?= html_entity_decode(contentValue($lp, 'title'));?></span> 
+                                        <span class="d-block text-medium-gray text-small"><?= html_entity_decode(contentValue($lp, 'desc'));?></span>
                                     </a>    
                                     </div>
                                    
-                                    <div class="p-0 map-desc col-2 elements-social social-icon-style-8">
+                                    <div class="p-0 map-desc col-6 elements-social social-icon-style-8">
                                         <ul class="small-icon no-margin-bottom float-right">
                                         <?php 
                                         $str_arr = explode('-', contentValue($lp, 'category'));
@@ -155,7 +155,7 @@
                                            var category = setIcon(json[i].category);
 						// alert(json[i].images);
 						dynamicHTML += '<li class="media " id="linkbtn' + json[i].row_id + '">';
-                                                dynamicHTML += '<div class="col-10">';
+                                                dynamicHTML += '<div class="col-6">';
 						dynamicHTML += '<a href="#map" class="media-body text-small" data-id="' + json[i].row_id + '"\n\
                                                     data-title="' + json[i].title + '"\n\
                                                     data-lat="' + json[i].latitude + '"\n\
@@ -167,11 +167,11 @@
                                                     data-cat="' + json[i].category + '" \n\
                                                     data-dir="' + json[i].direction + '" \n\
                                                     onclick="setMap(this);">';
-						dynamicHTML += '<span class="d-block text-extra-dark-gray alt-font margin-5px-bottom">' + json[i].title + '</span>';
-						dynamicHTML += '<span class="d-block text-extra-small">' + json[i].desc + '</span>';
+						dynamicHTML += '<span class="d-block margin-5px-bottom">' + json[i].title + '</span>';
+						dynamicHTML += '<span class="d-block text-medium-gray text-small">' + json[i].desc + '</span>';
 						dynamicHTML += '</a>';
                                                 dynamicHTML += '</div>';
-                                                dynamicHTML += '<div class="p-0 map-desc col-2 elements-social social-icon-style-8"><ul class="small-icon no-margin-bottom float-right">'  + category + '</ul>';
+                                                dynamicHTML += '<div class="p-0 map-desc col-6 elements-social social-icon-style-8"><ul class="small-icon no-margin-bottom float-right">'  + category + '</ul>';
                                                 dynamicHTML += '</div>';
 						dynamicHTML += '</li>';
 
@@ -248,7 +248,7 @@ function initMap(title, lati, longi, img, addr, phem, web,category,direction,loc
 		var zoom = 10;
 		var locks = lock;
 		var locations = [
-			[title, latitude, longitude, img, addr, phem, web,'',category,direction]
+			['AC CAWANG ' + title, latitude, longitude, img, addr, phem, web,'',category,direction]
 		];
 		
 
@@ -266,14 +266,14 @@ function initMap(title, lati, longi, img, addr, phem, web,category,direction,loc
                            $descsss= str_replace(array("\r", "\n"), '', $descs)
                           ?>
                                  
-                    ['<?= contentValue($lp, 'title');?>',
+                        ['<?= strtoupper(contentValue($lp, 'title'));?>',
                       <?=contentValue($lp, 'latitude');?>, 
                       <?=contentValue($lp, 'longitude');?>,
                                   '<?= contentValue($lp, 'images');?> ',
                                   '<?= html_entity_decode($descsss);?>',
                                   '<?= contentValue($lp, 'phone');?>',
                                   '<?= contentValue($lp, 'website');?>',
-                                  '<?= $lp['row_id'];?>',
+                                   '<?= $lp['row_id'];?>',
                                   '<?= contentValue($lp, 'category');?>',
                                   '<?= contentValue($lp, 'direction');?>'],         
                       <?php  } ?>
@@ -325,16 +325,16 @@ function loadMap(center, zoom, locations, locks) {
                                     '<div class="p-0 iw-content">' +
                                     '<img src="' + images + '" alt="' + title + '">' +
                                     '</div>' +
-                                    '<div class="padding-five-lr padding-five-top"><span class=" alt-font text-small iw-title">' + title + '</span></div>' +
+                                    '<div class="padding-one-top iw-title">' + title + '</div>' +
                                     '<div class="cscroll scroll-style">' +
-                                        '<p class="padding-five-lr text-small"> ' + address +'</p>' +
+                                        '<p class="padding-5px-all text-small"> ' + address +'</p>' +
                                         '<div class="p-0 col-md-12 addr-icon">' +   
                                                 '<div class="col-md-6 addrs text-small">' +
-                                                    '<span class="text-small"><a href="#">' + phone + '</a><br/>' +
+                                                    '<span class="text-small"><a target="_blank" href="tel:'+ phone + '">' + phone + '</a><br/>' +
                                                     '<a target="_blank" href="'+ web + '">' + web + '</a><br/>' +
                                                     '<a target="_blank" href="'+ direction + '">Direction</a></span>' +
                                                 '</div>' +
-                                                '<div class="col-md-6 icons elements-social social-icon-style-8"><ul class="padding-five-lr padding-five-top small-icon no-margin-bottom float-right"> ' + icons + '</ul></div>' +
+                                                '<div class="col-md-6 icons elements-social social-icon-style-8"><ul class="p-0 text-right small-icon no-margin-bottom float-right"> ' + icons + '</ul></div>' +
                                         '</div>' +
                                     '</div>' +
                                     '</div>';

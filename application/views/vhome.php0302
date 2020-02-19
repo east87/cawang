@@ -2,7 +2,7 @@
 <html class="no-js" lang="en">
     <head>
              <!-- title -->
-        <title>AC Cawang Pro | Dingin Lebih Cepat</title>
+        <title>Cawang AC Pro | Dingin Lebih Cepat</title>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1" />
@@ -399,7 +399,7 @@ function loadMap(center, zoom, locations, locks) {
                     <div class="row justify-content-center">
                     <div class="col-12 col-lg-7 text-center margin-30px-bottom sm-margin-40px-bottom">
                         <div class="position-relative overflow-hidden w-100">
-                            <span class="text-small text-outside-line-full alt-font font-weight-600 text-uppercase">AC Cawang Pro</span>
+                            <span class="text-small text-outside-line-full alt-font font-weight-600 text-uppercase">Cawang AC Pro</span>
                         </div>
                     </div>
                 </div>

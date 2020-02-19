@@ -94,7 +94,7 @@
                 <div class="row justify-content-left">
                     <div class="col-12 col-lg-10 padding-10px-all">
                         <h5 class="text-extra-dark-gray alt-font font-weight-500">Inovasi &nbsp;
-                            <span class="headspan text-light-blue d-block d-md-inline-block">AC Cawang Pro
+                            <span class="headspan text-light-blue d-block d-md-inline-block">Cawang AC Pro
                             </span>
                         </h5>
                    </div>
@@ -180,7 +180,7 @@
                 <div class="row justify-content-left">
                     <div class="col-12 col-lg-10 padding-10px-all">
                         <h5 class="text-extra-dark-gray alt-font font-weight-500">Keunggulan &nbsp;
-                            <span class="headspan text-light-blue d-block d-md-inline-block">AC Cawang Pro
+                            <span class="headspan text-light-blue d-block d-md-inline-block">Cawang AC Pro
                             </span>
                         </h5>
                    </div>
@@ -210,7 +210,7 @@
                     </div>
                     <div class="col-12 col-lg-5 order-2 order-lg-2 text-center text-lg-left offset-lg-1 md-padding-50px-all sm-padding-15px-lr">
                         <h6 class="alt-font text-extra-dark-gray font-weight-600">Awet, Tahan lama dan Berstandar SNI</h6>
-                        <p class="width-90 md-width-100">ketahanan dalam jangka panjang untuk memastikan bahwa kinerja Cawang AC Pro tetap optimal. Untuk itu, Cawang AC Pro memberikan garansi kompresor selama 3 tahun. Cawanng AC Pro juga terbukti uji SNI oleh pemerintah Indonesia.</p>
+                        <p class="width-90 md-width-100">Ketahanan dalam jangka panjang untuk memastikan bahwa kinerja Cawang AC Pro tetap optimal. Untuk itu, Cawang AC Pro memberikan garansi kompresor selama 3 tahun. Cawang AC Pro juga terbukti uji SNI oleh pemerintah Indonesia.</p>
                         
                     </div>
                     

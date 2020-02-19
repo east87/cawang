@@ -93,7 +93,7 @@
                                         'display_gallery': true,
                                         'callback': null,
                                         'styling': true,
-                                        'items': 8,
+                                        'items': 12,
                                         'items_per_row': 4,
                                         'margin': 0.50
                                     });

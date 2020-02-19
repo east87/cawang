@@ -2,7 +2,7 @@
 <html class="no-js" lang="en">
     <head>
              <!-- title -->
-        <title>AC Cawang Pro | Dingin Lebih Cepat</title>
+        <title>Cawang AC Pro | Dingin Lebih Cepat</title>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1" />
@@ -42,9 +42,17 @@
          <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
          <?php include 'include/analytics.php';?>
         <style>
-            #myDIV {
-                max-height: 400px;
-                overflow-y: auto;
+            div.gmnoprint{
+                 margin: 1px!important;
+            }
+            .gmnoprint .gm-style-mtc div{
+                height: 25px!important;
+                font-size: 14px!important;
+            }
+            button.gm-fullscreen-control{
+                margin: 1px!important;
+                height: 25px!important;
+                width: 25px!important;
             }
              div#office-info-box { max-width: 200px!important;}
             .tab-style4 .nav-tabs li a {
@@ -54,7 +62,7 @@
             }
         
         </style>
-        <script>
+      <script>
         $(document).ready(function () {
 	$('button.search-btn').on('click', function (event) {
 
@@ -86,8 +94,8 @@
                                            var category = setIcon(json[i].category);
 						// alert(json[i].images);
 						dynamicHTML += '<li class="media " id="linkbtn' + json[i].row_id + '">';
-                                                dynamicHTML += '<div class="col-8">';
-						dynamicHTML += '<a href="#map" class="media-body text-small" data-id="' + json[i].row_id + '"\n\
+                                                dynamicHTML += '<div class="col-10">';
+						dynamicHTML += '<a href="#lokasi" class="media-body text-small" data-id="' + json[i].row_id + '"\n\
                                                     data-title="' + json[i].title + '"\n\
                                                     data-lat="' + json[i].latitude + '"\n\
                                                     data-long="' + json[i].longitude + '"\n\
@@ -96,12 +104,13 @@
                                                     data-phone="' + json[i].phone + '" \n\
                                                     data-web="' + json[i].website + '" \n\
                                                     data-cat="' + json[i].category + '" \n\
+                                                    data-dir="' + json[i].direction + '" \n\
                                                     onclick="setMap(this);">';
-						dynamicHTML += '<span class="d-block margin-5px-bottom">' + json[i].title + '</span>';
-						dynamicHTML += '<span class="d-block text-medium-gray text-small">' + json[i].desc + '</span>';
+						dynamicHTML += '<span class="d-block text-extra-dark-gray alt-font margin-5px-bottom">' + json[i].title + '</span>';
+						dynamicHTML += '<span class="d-block text-extra-small">' + json[i].desc + '</span>';
 						dynamicHTML += '</a>';
                                                 dynamicHTML += '</div>';
-                                                dynamicHTML += '<div class="map-desc col-4">'  + category + '';
+                                                dynamicHTML += '<div class="p-0 map-desc col-2 elements-social social-icon-style-8"><ul class="small-icon no-margin-bottom float-right">'  + category + '</ul>';
                                                 dynamicHTML += '</div>';
 						dynamicHTML += '</li>';
 
@@ -135,7 +144,7 @@
 				};
 
 				var zoom = 10;
-				var locks = "2";
+				var locks = "0";
 				var locations = [];
 				for (var i = 0, length = json.length; i < length; i++) {
                                             var title = json[i].title,
@@ -146,8 +155,9 @@
 						phone = json[i].phone,
 						website = json[i].website,
 						row_id = json[i].row_id,
-                                                category = json[i].category;
-                                locations[i] = [title, latitude, longitude, images, addr, phone, website, row_id,category];
+                                                category = json[i].category,
+                                                direction = json[i].direction;
+                                locations[i] = [title, latitude, longitude, images, addr, phone, website, row_id,category,direction];
 
 
 				}
@@ -165,7 +175,8 @@
 });
 
 
-function initMap(title, lati, longi, img, addr, phem, web, category, lock) {
+function initMap(title, lati, longi, img, addr, phem, web,category,direction,lock) {
+
 	if (title != null || lati != null || longi != null) {
 		var latitude = parseFloat(lati);
 		var longitude = parseFloat(longi);
@@ -176,8 +187,9 @@ function initMap(title, lati, longi, img, addr, phem, web, category, lock) {
 		var zoom = 10;
 		var locks = lock;
 		var locations = [
-			['AC CAWANG ' + title, latitude, longitude, img, addr, phem, web,'',category]
+			[title, latitude, longitude, img, addr, phem, web,'',category,direction]
 		];
+		
 
 	} else {
 		var locks = "0";
@@ -187,26 +199,28 @@ function initMap(title, lati, longi, img, addr, phem, web, category, lock) {
 		};
 
 		var zoom = 5;
-                var locations = [
+		var locations = [
                       <?php foreach ($ListMaps as $lp) { 
                            $descs=(contentValue($lp, 'desc'));
                            $descsss= str_replace(array("\r", "\n"), '', $descs)
                           ?>
                                  
-                        ['<?= strtoupper(contentValue($lp, 'title'));?>',
+                        ['<?= contentValue($lp, 'title');?>',
                       <?=contentValue($lp, 'latitude');?>, 
                       <?=contentValue($lp, 'longitude');?>,
-                                  '<?=contentValue($lp, 'images');?> ',
+                                  '<?= contentValue($lp, 'images');?> ',
                                   '<?= html_entity_decode($descsss);?>',
-                                  '<?=contentValue($lp, 'phone');?>',
-                                  '<?=contentValue($lp, 'website');?>',
-                                  <?=$lp['row_id'];?>,
-                                  '<?=contentValue($lp, 'category');?>'],         
+                                  '<?= contentValue($lp, 'phone');?>',
+                                  '<?= contentValue($lp, 'website');?>',
+                                   '<?= $lp['row_id'];?>',
+                                  '<?= contentValue($lp, 'category');?>',
+                                  '<?= contentValue($lp, 'direction');?>'],         
                       <?php  } ?>
 		];
 	}
+       // alert(locations);
 
-	loadMap(center, zoom, locations, lock, locks);
+	loadMap(center, zoom, locations, locks);
 }
 
 function setMap(item) {
@@ -221,8 +235,9 @@ function setMap(item) {
 	var phem = $(item).attr("data-phone");
 	var web = $(item).attr("data-web");
         var category = $(item).attr("data-cat");
+        var direction = $(item).attr("data-dir");
 	document.getElementById("linkbtn" + id).className = "active";
-	initMap(title, lati, longi, img, addr, phem, web,category, lock);
+	initMap(title, lati, longi, img, addr, phem, web,category,direction, lock);
 }
 
 function loadMap(center, zoom, locations, locks) {
@@ -243,27 +258,30 @@ function loadMap(center, zoom, locations, locks) {
 		var web = locations[count][6];
 		var id = locations[count][7];
                 var category = locations[count][8];
+                var direction = locations[count][9];
                 var icons = setIcon(category);
-		var contentString = '<div id="office-info-box col-6">\n\
-                                 <div class="map-img">\n\
-                                 <img class="" src="' + images + '" width="200" height="100">\n\
-                                 </div>\n\
-                                <div class="map-flex">\n\
-                                 <div class="map-desc col-6">\n\
-                                 <p class="cawang-content-info"><b>' + title + '</b><br/>\n\
-                                  ' + address + '<br/>\
-                                  Web : <a target="_blank" href="'+ web + '">' + web + '</a><br/>\
-                                  Phone : ' + phone + '</p>\n\
-                                 </div>\n\
-                                \n\ <div class="map-category col-6">\n\
-                                  ' + icons + '\n\
-                                 </div>\n\
-                                 </div>\n\
-                                 </div>';
-
+		var contentString ='<div class="p-0 col-md-12" id="iw-container">' +
+                                    '<div class="p-0 iw-content">' +
+                                    '<img src="' + images + '" alt="' + title + '">' +
+                                    '</div>' +
+                                    '<div class="padding-five-lr padding-five-top"><span class=" alt-font text-small iw-title">' + title + '</span></div>' +
+                                    '<div class="cscroll scroll-style">' +
+                                        '<p class="padding-five-lr text-small"> ' + address +'</p>' +
+                                        '<div class="p-0 col-md-12 addr-icon">' +   
+                                                '<div class="col-md-6 addrs text-small">' +
+                                                    '<span class="text-small"><a href="#">' + phone + '</a><br/>' +
+                                                    '<a target="_blank" href="'+ web + '">' + web + '</a><br/>' +
+                                                    '<a target="_blank" href="'+ direction + '">Direction</a></span>' +
+                                                '</div>' +
+                                                '<div class="col-md-6 icons elements-social social-icon-style-8"><ul class="padding-five-lr padding-five-top small-icon no-margin-bottom float-right"> ' + icons + '</ul></div>' +
+                                        '</div>' +
+                                    '</div>' +
+                                    '</div>';
+                                     
 		infowindow = new google.maps.InfoWindow({
 			content: contentString
 		});
+                //alert(contentString);
 		marker = new google.maps.Marker({
 			position: new google.maps.LatLng(locations[count][1], locations[count][2]),
 			map: map,
@@ -271,12 +289,12 @@ function loadMap(center, zoom, locations, locks) {
 			title: locations[count][0]
 
 		});
+              //infowindow.open(map, marker);
 		if (locks === "1") {
 			infowindow.open(map, marker);
-		}
-		//     
+		}    
 
-		google.maps.event.addListener(marker, 'click', (function (marker, count) {
+		google.maps.event.addListener(marker, 'click', (function (marker,contentString, count) {
 			return function () {
 				map.setZoom(15);
 				map.setCenter(marker.getPosition());
@@ -286,7 +304,7 @@ function loadMap(center, zoom, locations, locks) {
 				document.getElementById("linkbtn" + id).className = "active";
 
 			};
-		})(marker, count));
+		})(marker,contentString, count));
 
 	}
 }
@@ -296,10 +314,10 @@ function setIcon(category){
 var fields = category.split('-');
 var HTML = '';
 var img1 = fields[0]+'.png';
-HTML += '<img src="<?=IMAGES_BASE_URL?>/'+img1+'"> ';
+HTML += '<li><img src="<?=IMAGES_BASE_URL?>/'+img1+'"></li>';
 if (fields[1]){
   var img2 = fields[1]+'.png';
-HTML += '<img src="<?=IMAGES_BASE_URL?>/'+img2+'">';  
+HTML += '<li><img src="<?=IMAGES_BASE_URL?>/'+img2+'"></li>';  
 }
 
 return HTML;
@@ -464,7 +482,7 @@ return HTML;
                     <div class="row justify-content-center">
                     <div class="col-12 col-lg-7 text-center margin-30px-bottom sm-margin-40px-bottom">
                         <div class="position-relative overflow-hidden w-100">
-                            <span class="text-small text-outside-line-full alt-font font-weight-600 text-uppercase">AC Cawang Pro</span>
+                            <span class="text-small text-outside-line-full alt-font font-weight-600 text-uppercase">Cawang AC Pro</span>
                         </div>
                     </div>
                 </div>
@@ -605,58 +623,61 @@ return HTML;
             </div>
         </section>
         
-         <section class="wow fadeIn padding-50px-all" style="display: none;">
+         <section class="wow fadeIn padding-10px-all" style="" id="lokasi">
             <div class="container">
                 <div class="row flex-lg-row-reverse"> 
                 
-               <main class="col-12 col-lg-9 left-sidebar md-margin-60px-bottom sm-margin-40px-bottom pr-0 md-no-padding-left">
+               <main class="col-xs-12 col-lg-9 left-sidebar pr-0 md-no-padding-left">
                      <div id="map" class="col-12 w-100 h-100">
                             
                     </div>
                </main>
                 <aside class="col-12 col-lg-3">
-                   <div class="margin-15px-tb">
-                            <a href="<?= BASE_URL;?>/about"><img src="<?= IMAGES_BASE_URL;?>/logo-footer.png" alt="" class="margin-25px-bottom" data-no-retina=""></a>
+                    <div class="margin-15px-tb">
+                            <a href="<?= BASE_URL;?>"><img src="<?= IMAGES_BASE_URL;?>/logo-footer.png" alt="" class="margin-25px-bottom" data-no-retina=""></a>
                    </div>
                      <div class="d-inline-block width-100 margin-15px-tb">
                          <label class="text-small">Temukan Kami di</label>
                             <div class="position-relative">
-                                    <input id="input-search" type="text" class="bg-transparent text-small m-0 border-color-extra-light-gray medium-input float-left" placeholder="Enter your keywords...">                                   
+                                    <input id="input-search" type="text" class="bg-transparent text-small m-0 border-color-extra-light-gray medium-input float-left" placeholder="nama kota / daerah">                                   
                                     <button id="submit-search" type="submit" class="search-btn bg-primary btn position-absolute right-0 top-1"><i class="fas fa-search no-margin-left"></i></button>
                             </div> 
                         </div>
                      <div class="margin-45px-bottom sm-margin-25px-bottom">
                             <div class="text-extra-dark-gray margin-25px-bottom alt-font text-uppercase font-weight-600 text-small aside-title"><span id="loc_search">List</span></div>
-                            <ul class="latest-post position-relative" id="myDIV">
+                            <ul class="latest-post position-relative scroll-style" id="myDIV">
                                 <?php foreach ($ListMaps as $lp) {?>
                                 <li class="media " id="linkbtn<?=$lp['row_id'];?>">
-                                    <div class="col-8">
-                                     <a class="media-body text-small" 
+                                    <div class="col-10">
+                                        <a href="#lokasi" class="media-body text-small" 
                                        data-id="<?=$lp['row_id'];?>" 
-                                       data-title="<?= strtoupper(contentValue($lp, 'title'));?>" 
+                                       data-title="<?= contentValue($lp, 'title');?>" 
                                        data-lat="<?=contentValue($lp, 'latitude');?>" data-long="<?=contentValue($lp, 'longitude');?>" 
                                        data-img="<?=contentValue($lp, 'images');?>" data-addr="<?=contentValue($lp, 'desc');?>" 
                                        data-phone="<?=contentValue($lp, 'phone');?>"
                                        data-web="<?=contentValue($lp, 'website');?>"
                                        data-cat="<?=contentValue($lp, 'category');?>"
+                                       data-dir="<?=contentValue($lp, 'direction');?>"
                                        onclick="setMap(this);">                      
-                                        <span class="d-block margin-5px-bottom"><?= html_entity_decode(contentValue($lp, 'title'));?></span> 
-                                        <span class="d-block text-medium-gray text-small"><?= html_entity_decode(contentValue($lp, 'desc'));?></span>
+                                        <span class="d-block text-extra-dark-gray alt-font margin-5px-bottom"><?= html_entity_decode(contentValue($lp, 'title'));?></span> 
+                                        <span class="d-block text-extra-small"><?= html_entity_decode(contentValue($lp, 'desc'));?></span>
                                     </a>    
                                     </div>
                                    
-                                    <div class="map-desc col-4">
+                                    <div class="p-0 map-desc col-2 elements-social social-icon-style-8">
+                                        <ul class="small-icon no-margin-bottom float-right">
                                         <?php 
                                         $str_arr = explode('-', contentValue($lp, 'category'));
                                         $HTML = '';
                                         $img1 = IMAGES_BASE_URL.'/'.$str_arr[0].'.png';
-                                        $HTML .= '<img src="'.$img1.'">';  
+                                        $HTML .= '<li><img src="'.$img1.'"></li>'; 
                                         if (isset($str_arr[1])){
                                         $img2 = IMAGES_BASE_URL.'/'.$str_arr[1].'.png';
-                                        $HTML .= '<img src="'.$img2.'">';  
+                                        $HTML .= '<li><img src="'.$img2.'"></li>';  
                                     }    
                                       echo $HTML;
                                         ?>
+                                        </ul>
                                     </div>
                                 </li>
                                 <?php  } ?>
@@ -667,8 +688,6 @@ return HTML;
             </div>
          </div>
       </section>
-        
-     
         <?php include 'include/vfooter.php';?>
         
         <!-- end scroll to top  -->
