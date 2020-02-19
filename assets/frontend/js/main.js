@@ -2496,3 +2496,10 @@ $(document).on('load', function () {
 
     fullScreenHeight();
 });
+ var $root = $('html, body');
+        $('.col-3 a[href^="#"]').click(function () {
+            $root.animate({
+                scrollTop: $( $.attr(this, 'href') ).offset().top
+            }, 900);
+            return false;
+        });

@@ -4748,9 +4748,26 @@
     border: none;
     white-space: nowrap;
 }
+
+.gm-style .gm-style-iw-d {
+   max-width: 250px!important;
+    min-height: 232px!important;
+    /* max-height: 349px!important; */
+    box-sizing: border-box;
+    overflow: hidden!important;
+    height: auto;
+}
+
 }
 
 @media (max-width: 640px) {
+    input#input-search{ padding: 6px 20px;}
+    div.cscroll {
+    min-height: 94px!important;
+    max-height: 100px!important;
+    box-sizing: border-box;
+    overflow-x: auto!important;
+    }
     ul > li.li-first{
         color :#000;
     }
