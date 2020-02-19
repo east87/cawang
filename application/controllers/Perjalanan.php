@@ -16,7 +16,7 @@ class Perjalanan extends CI_Controller {
                
 		$this->load->model(array('backend/Model_menu_frontend','web/Model_label','web/Model_content'));
 		$this->load->helper(array('funcglobal','menu','accessprivilege','alias'));
-               $this->data["menu_id"]=1;
+                $this->data["menu_id"]=1;
                
            
 	}

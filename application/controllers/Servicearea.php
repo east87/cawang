@@ -70,14 +70,17 @@ class Servicearea extends CI_Controller {
             $ListMaps =array();
             $index  = 0;
             foreach ($List as $ls) {
-             $ListMaps[$index]['title']= strtoupper(contentValue($ls, 'title'));
+             $descs=(contentValue($ls, 'desc'));
+             $descsss= str_replace(array("\r", "\n"), '', $descs);   
+             $ListMaps[$index]['title']= contentValue($ls, 'title');
              $ListMaps[$index]['latitude']= contentValue($ls, 'latitude'); 
              $ListMaps[$index]['longitude']= contentValue($ls, 'longitude');  
              $ListMaps[$index]['images']= contentValue($ls, 'images');  
-             $ListMaps[$index]['desc']= contentValue($ls, 'desc');  
+             $ListMaps[$index]['desc']= html_entity_decode($descsss);  
              $ListMaps[$index]['phone']= contentValue($ls, 'phone'); 
              $ListMaps[$index]['website']= contentValue($ls, 'website');
              $ListMaps[$index]['category']= contentValue($ls, 'category');
+             $ListMaps[$index]['direction']= contentValue($ls, 'direction');
              $ListMaps[$index]['row_id']= $ls['row_id'];
              $index ++; 
             
