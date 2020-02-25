@@ -2,7 +2,7 @@
 <html class="no-js" lang="en">
     <head>
         <!-- title -->
-        <title>Cawang AC Pro | Dingin Lebih Cepat</title>
+        <title>AC 1/2 PK | Dingin Lebih Cepat</title>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1" />
@@ -40,31 +40,37 @@
             <script src="<?= FRONTEND_BASE_URL; ?>/js/html5shiv.js"></script>
         <![endif]-->
          <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-        <?php include 'include/analytics.php';?>
+  <?php include 'include/analytics.php';?>
     </head>
     <body>
       
-        <div class="download-spek alt-font md-display-none">
-            <a href="" class="dropbtn">
-            <i class="ti-download"></i>
-          <span>Download Spek</span>
-          </a>
-        </div>
-        <div class="select-ac alt-font md-display-none">
+        
+        <div class="select-ac alt-font">
        <div class="dropdownleft">
-        <button class="dropbtn text-uppercase"> <i class="ti-angle-double-down"></i> <span>Pilih AC</span></button>
+        <button class="dropbtn text-uppercase"> <i class="ti-angle-double-down"></i> <span>1/2PK (5000 BTU/H)</span></button>
         <div class="dropdown-content">
-        <a href="<?= BASE_URL?>/Products/1" title="">1/2PK (5000 BTU/H)</a>
-        <a href="<?= BASE_URL?>/Products/2" title="">3/4PK (7000 BTU/H)</a>
-        <a href="<?= BASE_URL?>/Products/3" title="">1 PK (9000 BTU/H)</a>
-        <a href="<?= BASE_URL?>/Products/4" title="">1 1/2 PK (12000 BTU/H)</a>
+          <?php if($countProducts > 0){
+                    $i=0;
+                   foreach($Products as $hp){  $i++; 
+                   $i++;
+                   if ($hp['row_alias'] !=''){                          
+                       $ref =BASE_URL.'/'.$hp['row_alias'];
+                       }                       
+                       else {                          
+                    $ref = BASE_URL.'/products/'.$hp['row_id'];           
+                    } 
+                    if($hp['row_id'] !==$row_id ){
+                   ?>
+                    <a href="<?= $ref;?>" title=""><?= html_entity_decode(contentValue($hp, 'title'));?> (<?= html_entity_decode(contentValue($hp, 'btu'));?> BTU/H)</a>
+                    <?php }} }?>   
+        
         </div>
       </div>
         </div>
         <?php include 'include/tagmanager.php';?>
         <!-- start header -->
         <?php include 'include/vheader.php';?>
-       <section id="home" class="p-0 inner-match-height md-no-padding-bottom cover-background" data-stellar-background-ratio="0.5" style="background-image:url('<?= IMAGES_BASE_URL;?>/bg_product.jpg');">
+       <section id="home" class="p-0 inner-match-height md-no-padding-bottom cover-background" data-stellar-background-ratio="0.5" style="background-image:url('<?= IMAGES_BASE_URL;?>/bed_room_web.jpg');">
             <div class="opacity-extra-medium"></div>
             
         </section>
@@ -115,7 +121,7 @@
                                 </div> 
                                 <div class="col-12 col-lg-5">
                                     <h6 class="alt-font text-extra-dark-gray font-weight-600">Pasang Dimana Pun</h6>
-                                    <span class="text-extra-large text-extra-dark-gray margin-20px-bottom d-block">Dengan panjang pipa yang bisaa hingga 20m, maka outdoor unit bisa dipasang dimana pun tanpa batas</span>
+                                    <span class="text-extra-large text-extra-dark-gray margin-20px-bottom d-block">Dengan panjang pipa mencapai 20m, maka outdoor unit dapat dipasang di mana saja tanpa batas</span>
                                     <p class="text-small text-justify">
                                         Cawang AC Pro memiliki pipa dengan panjang 20m sehingga unit indoor AC dapat dipasang sesuai keinginan. Sedangakan AC merk lain memiliki pipa dengan panjang maksimal 15m yang membuat unit indoor dan outdoor AC dipasang dengan jarak berdekatan.
                                     </p>
@@ -197,7 +203,7 @@
                     <div class="col-12 col-lg-5 md-margin-50px-bottom">
                         <h6 class="alt-font text-extra-dark-gray font-weight-600">Dengan mode “Fast Cooling”</h6>
                     <p class="width-90 md-width-100 text-justify">
-                        Dingin Lebih Cepat: Dengan mode “Fast Cooling” Cawang AC Pro memiliki pendingin lebih cepat di ruangan yang disesuaikan dengan pengaturan suhu serta kecepatan kipas. Saat unit beroperasi, secara otomatis akan terasa perbandingan suhu ruangan dengan suhu yang diatur pada remote. Kecepatan kipas Cawang AC Pro pun terkontrol secara otomatis.
+                        Dengan mode “Fast Cooling” Cawang AC Pro memiliki pendingin lebih cepat di ruangan yang disesuaikan dengan pengaturan suhu serta kecepatan kipas. Saat unit beroperasi, secara otomatis akan terasa perbandingan suhu ruangan dengan suhu yang diatur pada remote. Kecepatan kipas Cawang AC Pro pun terkontrol secara otomatis.
                     </p>
                     </div>
                     <div class="col-12 col-lg-7 text-center">

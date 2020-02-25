@@ -40,7 +40,29 @@
             <script src="<?= FRONTEND_BASE_URL; ?>/js/html5shiv.js"></script>
         <![endif]-->
          <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-        <script>
+         <?php include 'include/analytics.php';?>
+        <style>
+            div.gmnoprint{
+                 margin: 1px!important;
+            }
+            .gmnoprint .gm-style-mtc div{
+                height: 25px!important;
+                font-size: 14px!important;
+            }
+            button.gm-fullscreen-control{
+                margin: 1px!important;
+                height: 25px!important;
+                width: 25px!important;
+            }
+             div#office-info-box { max-width: 200px!important;}
+            .tab-style4 .nav-tabs li a {
+                line-height: 44px;
+                padding: 5px 3px;
+                letter-spacing: 0.7px;
+            }
+        
+        </style>
+    <script>
         $(document).ready(function () {
 	$('button.search-btn').on('click', function (event) {
 
@@ -53,12 +75,12 @@
 		if (search !== '') {
 			$.ajax({
 					type: "POST",
-					url: "https://localhost/cawang/Servicearea/doSearch",
+					url: "<?= BASE_URL; ?>/servicearea/doSearch",
 					data: {
 						search: search
 					},
 					//dataType: 'html',
-					timeout: 10000
+					timeout: 5000
 				})
 				.always(function () {
 					$("#myDIV").empty();
@@ -69,19 +91,27 @@
 					var json = JSON.parse(response);
                                         if(json.length > 0){
 					for (var i = 0, length = json.length; i < length; i++) {
+                                           var category = setIcon(json[i].category);
 						// alert(json[i].images);
 						dynamicHTML += '<li class="media " id="linkbtn' + json[i].row_id + '">';
-						dynamicHTML += '<a href="#map" class="media-body text-small" data-id="' + json[i].row_id + '"\n\
-                                            data-title="' + json[i].title + '"\n\
-                                            data-lat="' + json[i].latitude + '"\n\
-                                            data-long="' + json[i].longitude + '"\n\
-                                            data-img="' + json[i].images + '" \n\
-                                            data-addr="' + json[i].desc + '" \n\
-                                            data-phone="' + json[i].phone + '" \n\
-                                            data-web="' + json[i].website + '" onclick="setMap(this);">';
-						dynamicHTML += '<span class="d-block margin-5px-bottom">' + json[i].title + '</span>';
-						dynamicHTML += '<span class="d-block text-medium-gray text-small">' + json[i].desc + '</span>';
+                                                dynamicHTML += '<div class="col-10">';
+						dynamicHTML += '<a href="#lokasi" class="media-body text-small" data-id="' + json[i].row_id + '"\n\
+                                                    data-title="' + json[i].title + '"\n\
+                                                    data-lat="' + json[i].latitude + '"\n\
+                                                    data-long="' + json[i].longitude + '"\n\
+                                                    data-img="' + json[i].images + '" \n\
+                                                    data-addr="' + json[i].desc + '" \n\
+                                                    data-phone="' + json[i].phone + '" \n\
+                                                    data-web="' + json[i].website + '" \n\
+                                                    data-cat="' + json[i].category + '" \n\
+                                                    data-dir="' + json[i].direction + '" \n\
+                                                    onclick="setMap(this);">';
+						dynamicHTML += '<span class="d-block text-extra-dark-gray alt-font margin-5px-bottom">' + json[i].title + '</span>';
+						dynamicHTML += '<span class="d-block text-extra-small">' + json[i].desc + '</span>';
 						dynamicHTML += '</a>';
+                                                dynamicHTML += '</div>';
+                                                dynamicHTML += '<div class="p-0 map-desc col-2 elements-social social-icon-style-8"><ul class="small-icon no-margin-bottom float-right">'  + category + '</ul>';
+                                                dynamicHTML += '</div>';
 						dynamicHTML += '</li>';
 
 
@@ -114,7 +144,7 @@
 				};
 
 				var zoom = 10;
-				var locks = "2";
+				var locks = "0";
 				var locations = [];
 				for (var i = 0, length = json.length; i < length; i++) {
                                             var title = json[i].title,
@@ -124,17 +154,14 @@
 						addr = json[i].desc,
 						phone = json[i].phone,
 						website = json[i].website,
-						row_id = json[i].row_id;
-                                locations[i] = [title, latitude, longitude, images, addr, phone, website, row_id];
-
-
+						id = json[i].row_id,
+                                                category = json[i].category,
+                                                direction = json[i].direction;
+                                locations[i] = [title, latitude, longitude, images, addr, phone, website, id,category,direction];
 				}
-
 				//console.log(locations);
 				loadMap(center, zoom, locations, locks);
 			}
-
-
 		}
 		return false;
 
@@ -143,7 +170,8 @@
 });
 
 
-function initMap(title, lati, longi, img, addr, phem, web, lock) {
+function initMap(id, title, lati, longi, img, addr, phem, web,category,direction,lock) {
+
 	if (title != null || lati != null || longi != null) {
 		var latitude = parseFloat(lati);
 		var longitude = parseFloat(longi);
@@ -151,11 +179,12 @@ function initMap(title, lati, longi, img, addr, phem, web, lock) {
 			lat: latitude,
 			lng: longitude
 		};
-		var zoom = 10;
+		var zoom = 20;
 		var locks = lock;
 		var locations = [
-			['AC CAWANG ' + title, latitude, longitude, img, addr, phem, web, '']
+			[title, latitude, longitude, img, addr, phem, web,id,category,direction]
 		];
+		
 
 	} else {
 		var locks = "0";
@@ -164,15 +193,29 @@ function initMap(title, lati, longi, img, addr, phem, web, lock) {
 			lng: 116.84513
 		};
 
-		var zoom = 5;
+		var zoom = 4.7;
 		var locations = [
-                      <?php foreach ($ListMaps as $lp) {?>
-                        ['<?= strtoupper(contentValue($lp, 'title'));?>',<?=contentValue($lp, 'latitude');?>, <?=contentValue($lp, 'longitude');?>,'<?=contentValue($lp, 'images');?>','<?=contentValue($lp, 'desc');?>','<?=contentValue($lp, 'phone');?>','<?=contentValue($lp, 'website');?>',<?=$lp['row_id'];?>],         
+                      <?php foreach ($ListMaps as $lp) { 
+                           $descs=(contentValue($lp, 'desc'));
+                           $descsss= str_replace(array("\r", "\n"), '', $descs)
+                          ?>
+                                 
+                        ['<?= contentValue($lp, 'title');?>',
+                      <?=contentValue($lp, 'latitude');?>, 
+                      <?=contentValue($lp, 'longitude');?>,
+                                  '<?= contentValue($lp, 'images');?> ',
+                                  '<?= html_entity_decode($descsss);?>',
+                                  '<?= contentValue($lp, 'phone');?>',
+                                  '<?= contentValue($lp, 'website');?>',
+                                   '<?= $lp['row_id'];?>',
+                                  '<?= contentValue($lp, 'category');?>',
+                                  '<?= contentValue($lp, 'direction');?>'],         
                       <?php  } ?>
 		];
 	}
+       // alert(locations);
 
-	loadMap(center, zoom, locations, lock, locks);
+	loadMap(center, zoom, locations, locks);
 }
 
 function setMap(item) {
@@ -186,14 +229,19 @@ function setMap(item) {
 	var addr = $(item).attr("data-addr");
 	var phem = $(item).attr("data-phone");
 	var web = $(item).attr("data-web");
+        var category = $(item).attr("data-cat");
+        var direction = $(item).attr("data-dir");
 	document.getElementById("linkbtn" + id).className = "active";
-	initMap(title, lati, longi, img, addr, phem, web, lock);
+	initMap(id,title, lati, longi, img, addr, phem, web,category,direction, lock);
 }
 
 function loadMap(center, zoom, locations, locks) {
 	var map = new google.maps.Map(document.getElementById('map'), {
 		zoom: zoom,
-		center: center
+		center: center,
+                scrollwheel: false,
+                gestureHandling: 'greedy',
+                mapTypeId: 'roadmap'
 	});
 
 	var infowindow = new google.maps.InfoWindow({});
@@ -201,56 +249,104 @@ function loadMap(center, zoom, locations, locks) {
 	var image = '<?=IMAGES_BASE_URL?>/location.png';
 
 	for (count = 0; count < locations.length; count++) {
+            
 		var title = locations[count][0];
 		var images = locations[count][3];
 		var address = locations[count][4];
 		var phone = locations[count][5];
 		var web = locations[count][6];
 		var id = locations[count][7];
-
-
-		var contentString = '<div id="office-info-box">\n\
-                                 <div class="map-img">\n\
-                                 <img class="" src="' + images + '" width="200" height="100">\n\
-                                 </div>\n\
-                                 <div class="map-desc">\n\
-                                 <p class="cawang-content-info"><b>' + title + '</b><br/>\n\
-                                  ' + address + '\
-                                    ' + phone + '</p>\n\
-                                 </div>\n\
-                                 </div>';
-
+                var category = locations[count][8];
+                var direction = locations[count][9];
+                var icons = setIcon(category);
+		var contentString ='<div class="p-0 col-md-12" id="iw-container">' +
+                                    '<div class="p-0 iw-content" id="imgcontent'+id+'" img_id="'+images+'">' +
+                                    '<img id="map_image'+id+'" src="" alt="' + title + '">' +
+                                    '</div>' +
+                                    '<div class="padding-five-lr padding-five-top"><span class=" alt-font text-small iw-title">' + title + '</span></div>' +
+                                    '<div class="cscroll scroll-style">' +
+                                        '<p class="padding-five-lr text-small"> ' + address +'</p>' +
+                                        '<div class="p-0 col-md-12 addr-icon">' +   
+                                                '<div class="col-md-6 addrs text-small">' +
+                                                    '<span class="text-small"><a href="#">' + phone + '</a><br/>' +
+                                                    '<a target="_blank" href="'+ web + '">' + web + '</a><br/>' +
+                                                    '<a target="_blank" href="'+ direction + '">Direction</a></span>' +
+                                                '</div>' +
+                                                '<div class="col-md-6 icons elements-social social-icon-style-8"><ul class="padding-five-lr padding-five-top small-icon no-margin-bottom float-right"> ' + icons + '</ul></div>' +
+                                        '</div>' +
+                                    '</div>' +
+                                    '</div>';
+                                     
 		infowindow = new google.maps.InfoWindow({
 			content: contentString
 		});
+                //alert(contentString);
 		marker = new google.maps.Marker({
 			position: new google.maps.LatLng(locations[count][1], locations[count][2]),
 			map: map,
-			icon: image,
+			ids: locations[count][7],
+                        img: locations[count][3],
+                        icon: image,
 			title: locations[count][0]
 
 		});
+              //infowindow.open(map, marker);
 		if (locks === "1") {
 			infowindow.open(map, marker);
-		}
-		//     
+                        setImagesBy(id,images);
+		}    
 
-		google.maps.event.addListener(marker, 'click', (function (marker, count) {
+		google.maps.event.addListener(marker, 'click', (function (marker,contentString) {
 			return function () {
-				map.setZoom(15);
-				map.setCenter(marker.getPosition());
+                              window.setTimeout(function() {
+                                map.panTo(marker.getPosition());
+                              }, 500);
+                              
+                              var ids = marker.ids;
+                               var img = marker.img;
+                              //alert(ids);
+				map.setZoom(20);
+				
 				$("ul#myDIV > li").removeClass("active");
+                                map.setCenter(marker.getPosition());
 				infowindow.setContent(contentString);
 				infowindow.open(map, marker);
-				document.getElementById("linkbtn" + id).className = "active";
+				document.getElementById("linkbtn" + ids).className = "active";
+                                window.setTimeout (function(){
+                               
+                                $("#map_image"+ids).attr("src",img); 
+                                $("#map_image"+ids).fadeIn('slow');
+                                
+                            }, 1000);
+                
 
 			};
-		})(marker, count));
+		})(marker,contentString,count));
 
 	}
 }
+
+            function setIcon(category){
+
+            var fields = category.split('-');
+            var HTML = '';
+            var img1 = fields[0]+'.png';
+            HTML += '<li><img src="<?=IMAGES_BASE_URL?>/'+img1+'"></li>';
+            if (fields[1]){
+              var img2 = fields[1]+'.png';
+            HTML += '<li><img src="<?=IMAGES_BASE_URL?>/'+img2+'"></li>';  
+            }
+
+            return HTML;
+            }
+            function setImagesBy(id,images){
+            setTimeout(function(){ $("#map_image"+id).attr("src",images); }, 500);
+            $("#map_image"+id).fadeIn('slow');
+            }
+            
+            
       </script>
-    <script async defer
+        <script async defer
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD4zysKrYdrgo8t8Ed4wtgtNBEwpms79qY&callback=initMap">
     </script>
     </head>
@@ -258,12 +354,11 @@ function loadMap(center, zoom, locations, locks) {
         <?php include 'include/tagmanager.php';?>
         <!-- start header -->
         <?php include 'include/vheader.php';?>
-        <section id="home" class="p-0 inner-match-height md-no-padding-bottom cover-background" data-stellar-background-ratio="0.5" style="background-image: url('<?= IMAGES_BASE_URL;?>/bn_home.jpg');">
+        <section id="home" class="p-0 inner-match-height md-no-padding-bottom" data-stellar-background-ratio="0.5">
             <div class="opacity-extra-medium"></div>
-            <video autoplay="" muted class="" poster="">
-                <source type="video/mp4" src="<?= IMAGES_BASE_URL;?>/bg_video.mp4">
-                <source type="video/ogg" src="<?= IMAGES_BASE_URL;?>/bg_video.ogg">
-                <source type="video/webm" src="<?= IMAGES_BASE_URL;?>/bg_video.webm">
+            <video id="vidbg" autoplay="" muted class="" poster="">
+               
+                
             </video>
         </section>
        <section class="padding-50px-all wow fadeIn position-relative cover-background background-position-top" style="background-image: url('<?= IMAGES_BASE_URL;?>/bg_perjalanan.jpg');">
@@ -279,9 +374,9 @@ function loadMap(center, zoom, locations, locks) {
                     <div class="row align-items-center padding-10px-all"> 
                         <div class="col-12 col-lg-5 md-margin-15px-bottom">
                            <h6 class="font-weight-600 alt-font text-extra-dark-gray">60 Tahun Perjalanan Cawang</h6>
-                        <p>Cawang merupakan merk dagang Indonesia yang ada sejak tahun 1954. Produk pertama yang di produksi oleh merk ini adalah Radio Transistor yang begitu dikenal luas oleh masyarakat Indonesia. Tak hanya itu saja, “Tjawang” juga memproduksi televisi pertama karya anak bangsa yang bersejarah dalam ajang “Asian Games ke-4” tahun 1962 di Indonesia.</p>
+                            <p>Cawang merupakan merk dagang Indonesia yang ada sejak tahun 1954. Produk pertama yang di produksi oleh merk ini adalah Radio Transistor yang begitu dikenal luas oleh masyarakat Indonesia. Tak hanya itu saja, “Tjawang” juga memproduksi televisi pertama karya anak bangsa yang bersejarah dalam ajang “Asian Games ke-4” tahun 1962 di Indonesia.</p>
                             <p>Kini, Cawang kembali hadir dengan produk baru untuk menjawab kebutuhan Indonesia. Cawang AC Pro merupakan AC yang memiliki keunggulan untuk memberikan rasa nyaman dan ramah lingkungan dengan harga yang terjangkau.</p>
-                        <a href="team-classic.html" class="btn btn-small btn-rounded btn-primary" style="margin-top:30px">Ikuti Perjalanan Cawang</a>
+                            <a href="<?= BASE_URL;?>/perjalanan" title="60 tahun perjalanan cawang" class="btn btn-small btn-rounded btn-primary" style="margin-top:30px">Ikuti Perjalanan Cawang</a>
                         </div>
                         <div class="col-12 col-lg-7 p-0">
                         <div class="right-swipe swiper-full-screen swiper-container white-move">
@@ -304,7 +399,7 @@ function loadMap(center, zoom, locations, locks) {
             </section> 
         
         <!-- start tab style 04 section -->
-        <section class="wow fadeIn bg-light-gray padding-50px-all">
+        <section class="wow fadeIn padding-50px-all">
             <div class="container tab-style4">
                 <div class="row justify-content-center">
                     <div class="col-12 col-lg-7 text-center margin-100px-bottom sm-margin-40px-bottom">
@@ -318,9 +413,10 @@ function loadMap(center, zoom, locations, locks) {
                         <!-- start tab navigation -->
                         <ul class="nav nav-tabs alt-font text-uppercase text-small font-weight-600">
                             <li class="nav-item"><a class="nav-link active" href="#tab-four1" data-toggle="tab">Anti Bocor & Karat</a></li>
-                            <li class="nav-item"><a class="nav-link" href="#tab-four2" data-toggle="tab">Bebas Bahaya Konsleting</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#tab-four2" data-toggle="tab">Aman Korsleting</a></li>
                             <li class="nav-item"><a class="nav-link" href="#tab-four3" data-toggle="tab">Proteksi Kebakaran</a></li>
-                            <li class="nav-item"><a class="nav-link" href="#tab-four4" data-toggle="tab">Tidak Berisik</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#tab-four4" data-toggle="tab">Suara Mesin Halus</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#tab-four5" data-toggle="tab">Instalasi Dimana Pun</a></li>
                         </ul>
                         <!-- end tab navigation -->
                     </div>
@@ -330,13 +426,12 @@ function loadMap(center, zoom, locations, locks) {
                             <div class="tab-pane med-text fade in active show" id="tab-four1">
                                 <div class="row align-items-center">
                                     <div class="col-12 col-md-6 sm-margin-30px-bottom">
-                                        <img src="<?= IMAGES_BASE_URL;?>/coating.png" alt="" class="w-100">
+                                        <img src="<?= IMAGES_BASE_URL;?>/coating-u.png" alt="" class="w-100">
                                     </div>
                                     <div class="col-12 col-lg-5 col-md-6 offset-lg-1">
                                         <h6 class="alt-font font-weight-700 text-extra-dark-gray margin-20px-bottom text-uppercase">Anti Bocor & Karat</h6>
                                         <span class="text-extra-large text-extra-dark-gray margin-20px-bottom d-block">Lapisan Pengaman yang membuat AC Lebih Tahan Lama</span>
                                         <p>Cawang AC Pro memiliki U Bend yang dilapisi oleh coating sehingga lebih tahan karat dan aman  dari kebocoran. Sedangkan merk lain U Bend tidak dilapisi coating sehingga tidak tahan karat dan rawan kebocoran.</p>
-                                        <a href="javascript:void(0);" class="btn btn-small btn-rounded btn-dark-gray">Explore services</a>
                                     </div>
                                 </div>
                             </div>
@@ -348,10 +443,9 @@ function loadMap(center, zoom, locations, locks) {
                                         <img src="<?= IMAGES_BASE_URL;?>/silicon.png" alt="" class="w-100">
                                     </div>
                                     <div class="col-12 col-lg-5 col-md-6 offset-lg-1">
-                                        <h6 class="alt-font font-weight-700 text-extra-dark-gray margin-20px-bottom text-uppercase">Bebas Bahaya Konsleting</h6>
-                                        <span class="text-extra-large text-extra-dark-gray margin-20px-bottom d-block">Lapisan Silicon</span>
-                                        <p>Cawang AC Pro terlindungi dari bahaya konsleting karena PCB dilapisi oleh silicon. Sedangkan merk lain rentan konsleting & arus pendek listrik karena PCB tidak dilapisi silicon.</p>
-                                        <a href="javascript:void(0);" class="btn btn-small btn-rounded btn-dark-gray">Explore services</a>
+                                        <h6 class="alt-font font-weight-700 text-extra-dark-gray margin-20px-bottom text-uppercase">Aman Korsleting</h6>
+                                        <span class="text-extra-large text-extra-dark-gray margin-20px-bottom d-block">Lapisan Silikon yang membuat AC menjadi Lebih Aman</span>
+                                        <p>Cawang AC Pro terlindungi dari bahaya korsleting karena PCB dilapisi oleh silicon. Sedangkan merk lain rentan korsleting & arus pendek listrik karena PCB tidak dilapisi silicon.</p>
                                     </div>
                                 </div>
                             </div>
@@ -360,13 +454,12 @@ function loadMap(center, zoom, locations, locks) {
                             <div class="tab-pane fade in" id="tab-four3">
                                 <div class="row align-items-center">
                                     <div class="col-12 col-md-6 sm-margin-30px-bottom">
-                                        <img src="<?= IMAGES_BASE_URL;?>/alumunium.png" alt="" class="w-100">
+                                        <img src="<?= IMAGES_BASE_URL;?>/alumunium-fire-protection.png" alt="" class="w-100">
                                     </div>
                                     <div class="col-12 col-lg-5 col-md-6 offset-lg-1">
                                         <h6 class="alt-font font-weight-700 text-extra-dark-gray margin-20px-bottom text-uppercase">Proteksi Kebakaran</h6>
-                                        <span class="text-extra-large text-extra-dark-gray margin-20px-bottom d-block">Lapisan Aluminium </span>
+                                        <span class="text-extra-large text-extra-dark-gray margin-20px-bottom d-block">Terdapat lapisan alumunium yang tahan percikan api</span>
                                         <p>Cawang AC Pro memiliki terminal board cover yang dilapisi aluminium foil sehingga tahan api. Sedangkan merk lain terminal board cover hanya berupa plastik, sehingga berbahaya jika ada percikan api.</p>
-                                        <a href="javascript:void(0);" class="btn btn-small btn-rounded btn-dark-gray">Explore services</a>
                                     </div>
                                 </div>
                             </div>
@@ -375,13 +468,26 @@ function loadMap(center, zoom, locations, locks) {
                             <div class="tab-pane fade in" id="tab-four4">
                                 <div class="row align-items-center">
                                     <div class="col-12 col-md-6 sm-margin-30px-bottom">
-                                        <img src="https://placehold.it/1232x816" alt=""/>
+                                        <img src="<?= IMAGES_BASE_URL;?>/kipas_ac_opt.png" alt="" class="w-100">
                                     </div>
                                     <div class="col-12 col-lg-5 col-md-6 offset-lg-1">
                                         <h6 class="alt-font font-weight-700 text-extra-dark-gray margin-20px-bottom text-uppercase">Tidak Berisik</h6>
-                                        <span class="text-extra-large text-extra-dark-gray margin-20px-bottom d-block">We use different types of massage for a variety of health related benefits purposes.</span>
-                                        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
-                                        <a href="javascript:void(0);" class="btn btn-small btn-rounded btn-dark-gray">Explore services</a>
+                                        <span class="text-extra-large text-extra-dark-gray margin-20px-bottom d-block"><i>Dimple</i> pada kipas yang dapat meredam kebisingan AC</span>
+                                        <p>Cawang AC Pro memiliki dimple (lubang kecil-kecil) pada kipas sehingga mengurangi suara berisik saat AC  beroperasi. Sedangkan AC merk lain tidak memiliki dimple pada kipas yang membuat suara berisik saat AC beroperasi.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- end tab content -->
+                            <!-- start tab content -->
+                            <div class="tab-pane fade in" id="tab-four5">
+                                <div class="row align-items-center">
+                                    <div class="col-12 col-md-6 sm-margin-30px-bottom">
+                                        <img src="<?= IMAGES_BASE_URL;?>/flexible_instalation.jpg" alt="" class="w-100">
+                                    </div>
+                                    <div class="col-12 col-lg-5 col-md-6 offset-lg-1">
+                                        <h6 class="alt-font font-weight-700 text-extra-dark-gray margin-20px-bottom text-uppercase">Pasang Dimana Pun</h6>
+                                        <span class="text-extra-large text-extra-dark-gray margin-20px-bottom d-block">Dengan panjang pipa mencapai 20m, maka outdoor unit dapat dipasang di mana saja tanpa batas</span>
+                                        <p>Cawang AC Pro memiliki pipa dengan panjang 20m sehingga unit indoor AC dapat dipasang sesuai keinginan. Sedangakan AC merk lain memiliki pipa dengan panjang maksimal 15m yang membuat unit indoor dan outdoor AC dipasang dengan jarak berdekatan.</p>
                                     </div>
                                 </div>
                             </div>
@@ -407,7 +513,7 @@ function loadMap(center, zoom, locations, locks) {
                     <div class="col-12 col-lg-8">
                         <div class="row align-items-center margin-25px-bottom">
                             <!-- start features box item -->
-                           <a class="hover-zoom col-12 col-md-3 text-center wow zoomIn" data-wow-delay="0.4s">
+                            <a href="<?= BASE_URL?>/products/1" title="" class="hover-zoom col-6 col-md-3 text-center wow zoomIn" data-wow-delay="0.4s">
                                 <div class="float-left padding-nine-left">
                                      <h6 class="text-light-blue font-weight-600 margin-three-bottom">1/2 PK</h6>
                                     <span class="text-medium text-extra-dark-gray alt-font d-block">5000 Btu/H</span>
@@ -417,7 +523,7 @@ function loadMap(center, zoom, locations, locks) {
                             </a>
                             <!-- end features box item -->
                             <!-- start features box item -->
-                            <a class="hover-zoom col-12 col-md-3 text-center wow zoomIn" data-wow-delay="0.4s">
+                            <a href="<?= BASE_URL?>/products/2" title="" class="hover-zoom col-6 col-md-3 text-center wow zoomIn" data-wow-delay="0.4s">
                                 <div class="float-left padding-nine-left">
                                      <h6 class="text-light-blue font-weight-600 margin-three-bottom">3/4 PK</h6>
                                     <span class="text-medium text-extra-dark-gray alt-font d-block">7000 Btu/H</span>
@@ -427,7 +533,7 @@ function loadMap(center, zoom, locations, locks) {
                             </a>
                             <!-- end features box item -->
                             <!-- start features box item -->
-                            <a class="hover-zoom col-12 col-md-3 text-center wow zoomIn" data-wow-delay="0.4s">
+                            <a href="<?= BASE_URL?>/products/3" title="" class="hover-zoom col-6 col-md-3 text-center wow zoomIn" data-wow-delay="0.4s">
                                 <div class="float-left padding-nine-left">
                                      <h6 class="text-light-blue font-weight-600 margin-three-bottom">1 PK</h6>
                                     <span class="text-medium text-extra-dark-gray alt-font d-block">9000 Btu/H</span>
@@ -437,7 +543,7 @@ function loadMap(center, zoom, locations, locks) {
                             </a>
                             <!-- end features box item -->
                             <!-- start features box item -->
-                            <a class="hover-zoom col-12 col-md-3 text-center wow zoomIn" data-wow-delay="0.6s" title="">
+                            <a href="<?= BASE_URL?>/products/4" title="" class="hover-zoom col-6 col-md-3 text-center wow zoomIn" data-wow-delay="0.6s" title="">
                                <div class="float-left padding-nine-left">
                                     <h6 class="text-light-blue font-weight-600 margin-three-bottom">1 1/2 PK</h6>
                                     <span class="text-medium text-extra-dark-gray alt-font d-block">12000 Btu/H</span>
@@ -453,16 +559,18 @@ function loadMap(center, zoom, locations, locks) {
                         <div class="col-12 col-lg-5 md-margin-50px-bottom">
                             <h6 class="alt-font text-extra-dark-gray font-weight-600">Pilihlah kapasitas AC yang tepat <br>sesuai dengan kebutuhan ruangan Anda.</h6>
                             <p>Pemilihan kapasitas AC yang salah dapat membuat penggunaan listrik lebih boros.</p>
+                           <!--
                            <a href="#modal-popup" class="modal-popup btn btn-small btn-rounded btn-primary">Hitung Kebutuhan AC</a>
+                           -->
                         </div>
                         <div class="col-12 col-lg-7 text-center">
-                            <img src="<?= IMAGES_BASE_URL;?>/ac.png" alt="" class="width-100">
+                            <img src="<?= IMAGES_BASE_URL;?>/ac-produk.png" alt="" class="width-100">
                         </div> 
                     </div>
                 </div>
             </section>
         
-        <section class="bg-light-gray wow fadeIn padding-50px-all hover-option4 blog-post-style3">
+        <section class="bg-light-gray wow fadeIn padding-50px-all hover-option4 blog-post-style3" style="display: none">
             <div class="container">
                  <div class="row justify-content-center">
                     <div class="col-12 col-lg-7 text-center margin-100px-bottom sm-margin-40px-bottom">
@@ -477,7 +585,7 @@ function loadMap(center, zoom, locations, locks) {
                         <div class="blog-post bg-white">
                             <div class="blog-post-images overflow-hidden position-relative">
                                 <a href="blog-post-layout-01.html">
-                                    <img src="https://placehold.it/700x403" alt="">
+                                    <img src="<?= IMAGES_BASE_URL;?>/mode.jpg" alt="">
                                     <div class="blog-hover-icon"><span class="text-extra-large font-weight-300">+</span></div>
                                 </a>
                             </div>
@@ -537,44 +645,62 @@ function loadMap(center, zoom, locations, locks) {
                 </div>
             </div>
         </section>
-        
-        <section class="wow fadeIn padding-50px-all">
+          <section class="wow fadeIn padding-50px-all" id="lokasi">
             <div class="container">
                 <div class="row flex-lg-row-reverse"> 
                 
-               <main class="col-12 col-lg-9 left-sidebar md-margin-60px-bottom sm-margin-40px-bottom pr-0 md-no-padding-left">
+               <main class="col-xs-12 col-lg-9 left-sidebar pr-0 md-no-padding-left">
                      <div id="map" class="col-12 w-100 h-100">
                             
                     </div>
                </main>
                 <aside class="col-12 col-lg-3">
-                    <div class="margin-45px-bottom sm-margin-25px-bottom">
-                            <a href="<?= BASE_URL;?>/about"><img src="<?= IMAGES_BASE_URL;?>/logo-footer.png" alt="" class="margin-25px-bottom" data-no-retina=""></a>
-                            <span class="font-weight-400 alt-font margin-one-bottom display-block text-extra-dark-gray"><strong>PT. Gobel Dharma Nusantara </strong>
-                                <br/> Jl. Dewi Sartika No. 14 (Cawang II) Jakarta 13630 - Indonesia</span>
-                    </div>
-                     <div class="d-inline-block width-100 margin-45px-bottom sm-margin-25px-bottom">
+                    <div class="margin-15px-tb">
+                            <a href="<?= BASE_URL;?>"><img src="<?= IMAGES_BASE_URL;?>/logo-footer.png" alt="" class="margin-25px-bottom" data-no-retina=""></a>
+                   </div>
+                     <div class="d-inline-block width-100 margin-15px-tb">
                          <label class="text-small">Temukan Kami di</label>
                             <div class="position-relative">
-                                    <input id="input-search" type="text" class="bg-transparent text-small m-0 border-color-extra-light-gray medium-input float-left" placeholder="Enter your keywords...">
+                                    <input id="input-search" type="text" class="bg-transparent text-small m-0 border-color-extra-light-gray medium-input float-left" placeholder="Nama kota / daerah">                                   
                                     <button id="submit-search" type="submit" class="search-btn bg-primary btn position-absolute right-0 top-1"><i class="fas fa-search no-margin-left"></i></button>
-                            </div>  
+                            </div> 
                         </div>
                      <div class="margin-45px-bottom sm-margin-25px-bottom">
                             <div class="text-extra-dark-gray margin-25px-bottom alt-font text-uppercase font-weight-600 text-small aside-title"><span id="loc_search">List</span></div>
-                            <ul class="latest-post position-relative" id="myDIV">
+                            <ul class="latest-post position-relative scroll-style" id="myDIV">
                                 <?php foreach ($ListMaps as $lp) {?>
                                 <li class="media " id="linkbtn<?=$lp['row_id'];?>">
-                                    <a href="#map" class="media-body text-small" 
+                                    <div class="col-10">
+                                        <a href="#lokasi" class="media-body text-small" 
                                        data-id="<?=$lp['row_id'];?>" 
-                                       data-title="<?= strtoupper(contentValue($lp, 'title'));?>" 
+                                       data-title="<?= contentValue($lp, 'title');?>" 
                                        data-lat="<?=contentValue($lp, 'latitude');?>" data-long="<?=contentValue($lp, 'longitude');?>" 
                                        data-img="<?=contentValue($lp, 'images');?>" data-addr="<?=contentValue($lp, 'desc');?>" 
                                        data-phone="<?=contentValue($lp, 'phone');?>"
-                                       data-web="<?=contentValue($lp, 'website');?>" onclick="setMap(this);">                      
-                                        <span class="d-block margin-5px-bottom"><?= html_entity_decode(contentValue($lp, 'desc'));?></span> 
-                                        <span class="d-block text-medium-gray text-small"><?= html_entity_decode(contentValue($lp, 'title'));?></span>
-                                    </a>
+                                       data-web="<?=contentValue($lp, 'website');?>"
+                                       data-cat="<?=contentValue($lp, 'category');?>"
+                                       data-dir="<?=contentValue($lp, 'direction');?>"
+                                       onclick="setMap(this);">                      
+                                        <span class="d-block text-extra-dark-gray alt-font margin-5px-bottom"><?= html_entity_decode(contentValue($lp, 'title'));?></span> 
+                                        <span class="d-block text-extra-small"><?= html_entity_decode(contentValue($lp, 'desc'));?></span>
+                                    </a>    
+                                    </div>
+                                   
+                                    <div class="p-0 map-desc col-2 elements-social social-icon-style-8">
+                                        <ul class="small-icon no-margin-bottom float-right">
+                                        <?php 
+                                        $str_arr = explode('-', contentValue($lp, 'category'));
+                                        $HTML = '';
+                                        $img1 = IMAGES_BASE_URL.'/'.$str_arr[0].'.png';
+                                        $HTML .= '<li><img src="'.$img1.'"></li>'; 
+                                        if (isset($str_arr[1])){
+                                        $img2 = IMAGES_BASE_URL.'/'.$str_arr[1].'.png';
+                                        $HTML .= '<li><img src="'.$img2.'"></li>';  
+                                    }    
+                                      echo $HTML;
+                                        ?>
+                                        </ul>
+                                    </div>
                                 </li>
                                 <?php  } ?>
                             </ul>
@@ -584,8 +710,6 @@ function loadMap(center, zoom, locations, locks) {
             </div>
          </div>
       </section>
-        
-     
         <?php include 'include/vfooter.php';?>
         
         <!-- end scroll to top  -->
@@ -638,7 +762,62 @@ function loadMap(center, zoom, locations, locks) {
       
         <script type="text/javascript" src="<?= FRONTEND_BASE_URL; ?>/js/main.js"></script>
        
-       
-       
+        <script src="<?php echo FRONTEND_BASE_URL?>/js/jquery.validate.min.js"></script>
+        <script src="<?php echo FRONTEND_BASE_URL; ?>/js/scriptForm.js"></script>
+         <script src="https://www.google.com/recaptcha/api.js?onload=myCallBack&render=explicit" async defer></script>
+     
+    <script type="text/javascript">
+        var recaptcha1;
+        var recaptcha2;
+         var myCallBack = function() {
+         
+            recaptcha2 = grecaptcha.render('recaptcha2', {
+            		'sitekey' : '<?php echo SITE_KEY;?>', //Replace this with your Site key
+            		'theme' : 'light',
+                        'hl' : 'id'        
+          	});
+          
+         };
+      </script>
+       <script>
+                        var w = window.matchMedia("(max-width: 700px)");
+                        var vid1 = document.getElementById("vidbg");
+                        var source1 = document.createElement("source");
+                        source1.id = "hvid1";
+                        source1.setAttribute("type", "video/mp4");
+                        vid1.appendChild(source1);
+                        
+                        if (w.matches) {
+                            vid1.pause();
+                            source1.removeAttribute("src");
+                            source1.setAttribute("src", "<?= VIDEO_BASE_URL; ?>/mobilevid.mp4");
+                            vid1.load();
+                            vid1.play();
+                        } else {
+                            vid1.pause();
+                            source1.removeAttribute("src");
+                            source1.setAttribute("src", "<?= VIDEO_BASE_URL; ?>/bg_video.mp4");
+                            vid1.load();
+                            vid1.play();
+                        }
+                        
+                        window.addEventListener("resize", function() {
+                            var w = window.matchMedia("(max-width: 700px)");
+                            var vid1 = document.getElementById("vid1");
+                            var source1 = document.getElementById("hvid1");
+                        
+                            if (w.matches) {
+                                vid1.pause();
+                                source1.src = "<?= VIDEO_BASE_URL; ?>/mobilevid.mp4";
+                                vid1.load();
+                                vid1.play();
+                            } else {
+                                vid1.pause();
+                                source1.src = "<?= VIDEO_BASE_URL; ?>/bg_video.mp4";
+                                vid1.load();
+                                vid1.play();
+                            }
+                        });
+                     </script>
     </body>
 </html>

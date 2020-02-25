@@ -43,87 +43,28 @@
             <script src="<?= FRONTEND_BASE_URL; ?>/js/html5shiv.js"></script>
         <![endif]-->
           <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-        <style media="screen" type="text/css">
-            
-        .navbar-top .dropdown-menu {
-            top: auto;
-            bottom: 100%;
-        }
-        .navbar-top .nav_logo a{
-            display: none;
-        }
-     
-      
-    </style>
-    </head>
-    <body>
-       
-    <section class="wow fadeIn padding-10px-all" style="">
-            <div class="container">
-                <div class="row flex-lg-row-reverse"> 
-                
-               <main class="col-xs-12 col-lg-9 left-sidebar pr-0 md-no-padding-left">
-                     <div id="map" class="col-12 w-100 h-100">
-                            
-                    </div>
-               </main>
-                <aside class="col-12 col-lg-3">
-                    <div class="margin-15px-tb">
-                            <a href="<?= BASE_URL;?>/about"><img src="<?= IMAGES_BASE_URL;?>/logo-footer.png" alt="" class="margin-25px-bottom" data-no-retina=""></a>
-                   </div>
-                     <div class="d-inline-block width-100 margin-15px-tb">
-                         <label class="text-small">Temukan Kami di</label>
-                            <div class="position-relative">
-                                    <input id="input-search" type="text" class="bg-transparent text-small m-0 border-color-extra-light-gray medium-input float-left" placeholder="Cari lokasi...">                                   
-                                    <button id="submit-search" type="submit" class="search-btn bg-primary btn position-absolute right-0 top-1"><i class="fas fa-search no-margin-left"></i></button>
-                            </div> 
-                        </div>
-                     <div class="margin-45px-bottom sm-margin-25px-bottom">
-                            <div class="text-extra-dark-gray margin-25px-bottom alt-font text-uppercase font-weight-600 text-small aside-title"><span id="loc_search">List</span></div>
-                            <ul class="latest-post position-relative scroll-style" id="myDIV">
-                                <?php foreach ($ListMaps as $lp) {?>
-                                <li class="media " id="linkbtn<?=$lp['row_id'];?>">
-                                    <div class="col-10">
-                                     <a class="media-body text-small" 
-                                       data-id="<?=$lp['row_id'];?>" 
-                                       data-title="<?= strtoupper(contentValue($lp, 'title'));?>" 
-                                       data-lat="<?=contentValue($lp, 'latitude');?>" data-long="<?=contentValue($lp, 'longitude');?>" 
-                                       data-img="<?=contentValue($lp, 'images');?>" data-addr="<?=contentValue($lp, 'desc');?>" 
-                                       data-phone="<?=contentValue($lp, 'phone');?>"
-                                       data-web="<?=contentValue($lp, 'website');?>"
-                                       data-cat="<?=contentValue($lp, 'category');?>"
-                                       data-dir="<?=contentValue($lp, 'direction');?>"
-                                       onclick="setMap(this);">                      
-                                        <span class="d-block text-extra-dark-gray alt-font margin-5px-bottom"><?= html_entity_decode(contentValue($lp, 'title'));?></span> 
-                                        <span class="d-block text-extra-small"><?= html_entity_decode(contentValue($lp, 'desc'));?></span>
-                                    </a>    
-                                    </div>
-                                   
-                                    <div class="p-0 map-desc col-2 elements-social social-icon-style-8">
-                                        <ul class="small-icon no-margin-bottom float-right">
-                                        <?php 
-                                        $str_arr = explode('-', contentValue($lp, 'category'));
-                                        $HTML = '';
-                                        $img1 = IMAGES_BASE_URL.'/'.$str_arr[0].'.png';
-                                        $HTML .= '<li><img src="'.$img1.'"></li>'; 
-                                        if (isset($str_arr[1])){
-                                        $img2 = IMAGES_BASE_URL.'/'.$str_arr[1].'.png';
-                                        $HTML .= '<li><img src="'.$img2.'"></li>';  
-                                    }    
-                                      echo $HTML;
-                                        ?>
-                                        </ul>
-                                    </div>
-                                </li>
-                                <?php  } ?>
-                            </ul>
-                        </div>
-                </aside>
-                
-            </div>
-         </div>
-      </section>
-   <script>
+        <style>
+            div.gmnoprint{
+                 margin: 1px!important;
+            }
+            .gmnoprint .gm-style-mtc div{
+                height: 25px!important;
+                font-size: 14px!important;
+            }
+            button.gm-fullscreen-control{
+                margin: 1px!important;
+                height: 25px!important;
+                width: 25px!important;
+            }
+             div#office-info-box { max-width: 200px!important;}
+            .tab-style4 .nav-tabs li a {
+                line-height: 44px;
+                padding: 5px 3px;
+                letter-spacing: 0.7px;
+            }
+        
+        </style>
+       <script>
         $(document).ready(function () {
 	$('button.search-btn').on('click', function (event) {
 
@@ -141,7 +82,7 @@
 						search: search
 					},
 					//dataType: 'html',
-					timeout: 10000
+					timeout: 5000
 				})
 				.always(function () {
 					$("#myDIV").empty();
@@ -156,7 +97,7 @@
 						// alert(json[i].images);
 						dynamicHTML += '<li class="media " id="linkbtn' + json[i].row_id + '">';
                                                 dynamicHTML += '<div class="col-10">';
-						dynamicHTML += '<a href="#map" class="media-body text-small" data-id="' + json[i].row_id + '"\n\
+						dynamicHTML += '<a href="#lokasi" class="media-body text-small" data-id="' + json[i].row_id + '"\n\
                                                     data-title="' + json[i].title + '"\n\
                                                     data-lat="' + json[i].latitude + '"\n\
                                                     data-long="' + json[i].longitude + '"\n\
@@ -204,7 +145,7 @@
 					lng: long
 				};
 
-				var zoom = 10;
+				var zoom = 12;
 				var locks = "0";
 				var locations = [];
 				for (var i = 0, length = json.length; i < length; i++) {
@@ -215,19 +156,14 @@
 						addr = json[i].desc,
 						phone = json[i].phone,
 						website = json[i].website,
-						row_id = json[i].row_id,
+						id = json[i].row_id,
                                                 category = json[i].category,
                                                 direction = json[i].direction;
-                                locations[i] = [title, latitude, longitude, images, addr, phone, website, row_id,category,direction];
-
-
+                                locations[i] = [title, latitude, longitude, images, addr, phone, website, id,category,direction];
 				}
-
 				//console.log(locations);
 				loadMap(center, zoom, locations, locks);
 			}
-
-
 		}
 		return false;
 
@@ -236,7 +172,7 @@
 });
 
 
-function initMap(title, lati, longi, img, addr, phem, web,category,direction,lock) {
+function initMap(id, title, lati, longi, img, addr, phem, web,category,direction,lock) {
 
 	if (title != null || lati != null || longi != null) {
 		var latitude = parseFloat(lati);
@@ -245,10 +181,10 @@ function initMap(title, lati, longi, img, addr, phem, web,category,direction,loc
 			lat: latitude,
 			lng: longitude
 		};
-		var zoom = 10;
+		var zoom = 20;
 		var locks = lock;
 		var locations = [
-			[title, latitude, longitude, img, addr, phem, web,'',category,direction]
+			[title, latitude, longitude, img, addr, phem, web,id,category,direction]
 		];
 		
 
@@ -266,14 +202,14 @@ function initMap(title, lati, longi, img, addr, phem, web,category,direction,loc
                            $descsss= str_replace(array("\r", "\n"), '', $descs)
                           ?>
                                  
-                    ['<?= contentValue($lp, 'title');?>',
+                        ['<?= contentValue($lp, 'title');?>',
                       <?=contentValue($lp, 'latitude');?>, 
                       <?=contentValue($lp, 'longitude');?>,
                                   '<?= contentValue($lp, 'images');?> ',
                                   '<?= html_entity_decode($descsss);?>',
                                   '<?= contentValue($lp, 'phone');?>',
                                   '<?= contentValue($lp, 'website');?>',
-                                  '<?= $lp['row_id'];?>',
+                                   '<?= $lp['row_id'];?>',
                                   '<?= contentValue($lp, 'category');?>',
                                   '<?= contentValue($lp, 'direction');?>'],         
                       <?php  } ?>
@@ -298,13 +234,17 @@ function setMap(item) {
         var category = $(item).attr("data-cat");
         var direction = $(item).attr("data-dir");
 	document.getElementById("linkbtn" + id).className = "active";
-	initMap(title, lati, longi, img, addr, phem, web,category,direction, lock);
+	initMap(id,title, lati, longi, img, addr, phem, web,category,direction, lock);
 }
 
 function loadMap(center, zoom, locations, locks) {
 	var map = new google.maps.Map(document.getElementById('map'), {
 		zoom: zoom,
-		center: center
+		center: center,
+                scaleControl: false,
+                scrollwheel: false,
+                gestureHandling: 'greedy',
+                mapTypeId: 'roadmap'
 	});
 
 	var infowindow = new google.maps.InfoWindow({});
@@ -312,6 +252,7 @@ function loadMap(center, zoom, locations, locks) {
 	var image = '<?=IMAGES_BASE_URL?>/location.png';
 
 	for (count = 0; count < locations.length; count++) {
+            
 		var title = locations[count][0];
 		var images = locations[count][3];
 		var address = locations[count][4];
@@ -322,8 +263,8 @@ function loadMap(center, zoom, locations, locks) {
                 var direction = locations[count][9];
                 var icons = setIcon(category);
 		var contentString ='<div class="p-0 col-md-12" id="iw-container">' +
-                                    '<div class="p-0 iw-content">' +
-                                    '<img src="' + images + '" alt="' + title + '">' +
+                                    '<div class="p-0 iw-content" id="imgcontent'+id+'" img_id="'+images+'">' +
+                                    '<img id="map_image'+id+'" src="" alt="' + title + '">' +
                                     '</div>' +
                                     '<div class="padding-five-lr padding-five-top"><span class=" alt-font text-small iw-title">' + title + '</span></div>' +
                                     '<div class="cscroll scroll-style">' +
@@ -346,44 +287,139 @@ function loadMap(center, zoom, locations, locks) {
 		marker = new google.maps.Marker({
 			position: new google.maps.LatLng(locations[count][1], locations[count][2]),
 			map: map,
-			icon: image,
+			ids: locations[count][7],
+                        img: locations[count][3],
+                        icon: image,
 			title: locations[count][0]
 
 		});
-             // infowindow.open(map, marker);
+              //infowindow.open(map, marker);
 		if (locks === "1") {
 			infowindow.open(map, marker);
+                        setImagesBy(id,images);
 		}    
 
-		google.maps.event.addListener(marker, 'click', (function (marker,contentString, count) {
+		google.maps.event.addListener(marker, 'click', (function (marker,contentString) {
 			return function () {
-				map.setZoom(15);
-				map.setCenter(marker.getPosition());
+                              window.setTimeout(function() {
+                                map.panTo(marker.getPosition());
+                              }, 500);
+                              
+                              var ids = marker.ids;
+                               var img = marker.img;
+                              //alert(ids);
+				map.setZoom(20);
+				
 				$("ul#myDIV > li").removeClass("active");
+                                map.setCenter(marker.getPosition());
 				infowindow.setContent(contentString);
 				infowindow.open(map, marker);
-				document.getElementById("linkbtn" + id).className = "active";
+				document.getElementById("linkbtn" + ids).className = "active";
+                                window.setTimeout (function(){
+                               
+                                $("#map_image"+ids).attr("src",img); 
+                                $("#map_image"+ids).fadeIn('slow');
+                                
+                            }, 1000);
+                
 
 			};
-		})(marker,contentString, count));
+		})(marker,contentString,count));
 
 	}
 }
 
-function setIcon(category){
+            function setIcon(category){
 
-var fields = category.split('-');
-var HTML = '';
-var img1 = fields[0]+'.png';
-HTML += '<li><img src="<?=IMAGES_BASE_URL?>/'+img1+'"></li>';
-if (fields[1]){
-  var img2 = fields[1]+'.png';
-HTML += '<li><img src="<?=IMAGES_BASE_URL?>/'+img2+'"></li>';  
-}
+            var fields = category.split('-');
+            var HTML = '';
+            var img1 = fields[0]+'.png';
+            HTML += '<li><img src="<?=IMAGES_BASE_URL?>/'+img1+'"></li>';
+            if (fields[1]){
+              var img2 = fields[1]+'.png';
+            HTML += '<li><img src="<?=IMAGES_BASE_URL?>/'+img2+'"></li>';  
+            }
 
-return HTML;
-}
+            return HTML;
+            }
+
+       
+            function setImagesBy(id,images){
+            setTimeout(function(){ $("#map_image"+id).attr("src",images); }, 500);
+            $("#map_image"+id).fadeIn('slow');
+            }
+            
+            
       </script>
+    </head>
+    <body>
+       
+    <section class="wow fadeIn padding-10px-all" style="" id="lokasi">
+            <div class="container">
+                <div class="row flex-lg-row-reverse"> 
+                
+               <main class="col-xs-12 col-lg-9 left-sidebar pr-0 md-no-padding-left">
+                     <div id="map" class="col-12 w-100 h-100">
+                            
+                    </div>
+               </main>
+                <aside class="col-12 col-lg-3">
+                    <div class="margin-15px-tb">
+                            <a href="<?= BASE_URL;?>"><img src="<?= IMAGES_BASE_URL;?>/logo-footer.png" alt="" class="margin-25px-bottom" data-no-retina=""></a>
+                   </div>
+                     <div class="d-inline-block width-100 margin-15px-tb">
+                         <label class="text-small">Temukan Kami di</label>
+                            <div class="position-relative">
+                                    <input id="input-search" type="text" class="bg-transparent text-small m-0 border-color-extra-light-gray medium-input float-left" placeholder="Nama kota / daerah">                                   
+                                    <button id="submit-search" type="submit" class="search-btn bg-primary btn position-absolute right-0 top-1"><i class="fas fa-search no-margin-left"></i></button>
+                            </div> 
+                        </div>
+                     <div class="margin-45px-bottom sm-margin-25px-bottom">
+                            <div class="text-extra-dark-gray margin-25px-bottom alt-font text-uppercase font-weight-600 text-small aside-title"><span id="loc_search">List</span></div>
+                            <ul class="latest-post position-relative scroll-style" id="myDIV">
+                                <?php foreach ($ListMaps as $lp) {?>
+                                <li class="media " id="linkbtn<?=$lp['row_id'];?>">
+                                    <div class="col-10">
+                                        <a href="#lokasi" class="media-body text-small" 
+                                       data-id="<?=$lp['row_id'];?>" 
+                                       data-title="<?= contentValue($lp, 'title');?>" 
+                                       data-lat="<?=contentValue($lp, 'latitude');?>" data-long="<?=contentValue($lp, 'longitude');?>" 
+                                       data-img="<?=contentValue($lp, 'images');?>" data-addr="<?=contentValue($lp, 'desc');?>" 
+                                       data-phone="<?=contentValue($lp, 'phone');?>"
+                                       data-web="<?=contentValue($lp, 'website');?>"
+                                       data-cat="<?=contentValue($lp, 'category');?>"
+                                       data-dir="<?=contentValue($lp, 'direction');?>"
+                                       onclick="setMap(this);">                      
+                                        <span class="d-block text-extra-dark-gray alt-font margin-5px-bottom"><?= html_entity_decode(contentValue($lp, 'title'));?></span> 
+                                        <span class="d-block text-extra-small"><?= html_entity_decode(contentValue($lp, 'desc'));?></span>
+                                    </a>    
+                                    </div>
+                                   
+                                    <div class="p-0 map-desc col-2 elements-social social-icon-style-8">
+                                        <ul class="small-icon no-margin-bottom float-right">
+                                        <?php 
+                                        $str_arr = explode('-', contentValue($lp, 'category'));
+                                        $HTML = '';
+                                        $img1 = IMAGES_BASE_URL.'/'.$str_arr[0].'.png';
+                                        $HTML .= '<li><img src="'.$img1.'"></li>'; 
+                                        if (isset($str_arr[1])){
+                                        $img2 = IMAGES_BASE_URL.'/'.$str_arr[1].'.png';
+                                        $HTML .= '<li><img src="'.$img2.'"></li>';  
+                                    }    
+                                      echo $HTML;
+                                        ?>
+                                        </ul>
+                                    </div>
+                                </li>
+                                <?php  } ?>
+                            </ul>
+                        </div>
+                </aside>
+                
+            </div>
+         </div>
+      </section>
+   
     <script async defer
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD4zysKrYdrgo8t8Ed4wtgtNBEwpms79qY&callback=initMap">
     </script>
@@ -465,5 +501,6 @@ function myFunction() {
 });
        
         </script>
+       
     </body>
 </html>

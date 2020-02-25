@@ -2,15 +2,15 @@
 <html class="no-js" lang="en">
     <head>
              <!-- title -->
-        <title>Cawang AC Pro | Dingin Lebih Cepat</title>
+        <title><?= html_entity_decode(contentValue($ListMeta[0], 'title'));?> | Dingin Lebih Cepat</title>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1" />
         <meta name="author" content="Cawang">
         <!-- description -->
-        <meta name="description" content="">
+        <meta name="description" content="<?= html_entity_decode(contentValue($ListMeta[0], 'meta_desc'));?>">
         <!-- keywords -->
-        <meta name="keywords" content="">
+        <meta name="keywords" content="<?= html_entity_decode(contentValue($ListMeta[0], 'meta_title'));?>">
         <!-- favicon -->
        <?php include 'include/icon.php';?> 
         <!-- animation -->
@@ -62,7 +62,7 @@
             }
         
         </style>
-      <script>
+    <script>
         $(document).ready(function () {
 	$('button.search-btn').on('click', function (event) {
 
@@ -80,7 +80,7 @@
 						search: search
 					},
 					//dataType: 'html',
-					timeout: 10000
+					timeout: 5000
 				})
 				.always(function () {
 					$("#myDIV").empty();
@@ -154,19 +154,14 @@
 						addr = json[i].desc,
 						phone = json[i].phone,
 						website = json[i].website,
-						row_id = json[i].row_id,
+						id = json[i].row_id,
                                                 category = json[i].category,
                                                 direction = json[i].direction;
-                                locations[i] = [title, latitude, longitude, images, addr, phone, website, row_id,category,direction];
-
-
+                                locations[i] = [title, latitude, longitude, images, addr, phone, website, id,category,direction];
 				}
-
 				//console.log(locations);
 				loadMap(center, zoom, locations, locks);
 			}
-
-
 		}
 		return false;
 
@@ -175,7 +170,7 @@
 });
 
 
-function initMap(title, lati, longi, img, addr, phem, web,category,direction,lock) {
+function initMap(id, title, lati, longi, img, addr, phem, web,category,direction,lock) {
 
 	if (title != null || lati != null || longi != null) {
 		var latitude = parseFloat(lati);
@@ -184,10 +179,10 @@ function initMap(title, lati, longi, img, addr, phem, web,category,direction,loc
 			lat: latitude,
 			lng: longitude
 		};
-		var zoom = 10;
+		var zoom = 20;
 		var locks = lock;
 		var locations = [
-			[title, latitude, longitude, img, addr, phem, web,'',category,direction]
+			[title, latitude, longitude, img, addr, phem, web,id,category,direction]
 		];
 		
 
@@ -198,7 +193,7 @@ function initMap(title, lati, longi, img, addr, phem, web,category,direction,loc
 			lng: 116.84513
 		};
 
-		var zoom = 5;
+		var zoom = 4.7;
 		var locations = [
                       <?php foreach ($ListMaps as $lp) { 
                            $descs=(contentValue($lp, 'desc'));
@@ -237,13 +232,16 @@ function setMap(item) {
         var category = $(item).attr("data-cat");
         var direction = $(item).attr("data-dir");
 	document.getElementById("linkbtn" + id).className = "active";
-	initMap(title, lati, longi, img, addr, phem, web,category,direction, lock);
+	initMap(id,title, lati, longi, img, addr, phem, web,category,direction, lock);
 }
 
 function loadMap(center, zoom, locations, locks) {
 	var map = new google.maps.Map(document.getElementById('map'), {
 		zoom: zoom,
-		center: center
+		center: center,
+                scrollwheel: false,
+                gestureHandling: 'greedy',
+                mapTypeId: 'roadmap'
 	});
 
 	var infowindow = new google.maps.InfoWindow({});
@@ -251,6 +249,7 @@ function loadMap(center, zoom, locations, locks) {
 	var image = '<?=IMAGES_BASE_URL?>/location.png';
 
 	for (count = 0; count < locations.length; count++) {
+            
 		var title = locations[count][0];
 		var images = locations[count][3];
 		var address = locations[count][4];
@@ -261,8 +260,8 @@ function loadMap(center, zoom, locations, locks) {
                 var direction = locations[count][9];
                 var icons = setIcon(category);
 		var contentString ='<div class="p-0 col-md-12" id="iw-container">' +
-                                    '<div class="p-0 iw-content">' +
-                                    '<img src="' + images + '" alt="' + title + '">' +
+                                    '<div class="p-0 iw-content" id="imgcontent'+id+'" img_id="'+images+'">' +
+                                    '<img id="map_image'+id+'" src="" alt="' + title + '">' +
                                     '</div>' +
                                     '<div class="padding-five-lr padding-five-top"><span class=" alt-font text-small iw-title">' + title + '</span></div>' +
                                     '<div class="cscroll scroll-style">' +
@@ -285,45 +284,69 @@ function loadMap(center, zoom, locations, locks) {
 		marker = new google.maps.Marker({
 			position: new google.maps.LatLng(locations[count][1], locations[count][2]),
 			map: map,
-			icon: image,
+			ids: locations[count][7],
+                        img: locations[count][3],
+                        icon: image,
 			title: locations[count][0]
 
 		});
               //infowindow.open(map, marker);
 		if (locks === "1") {
 			infowindow.open(map, marker);
+                        setImagesBy(id,images);
 		}    
 
-		google.maps.event.addListener(marker, 'click', (function (marker,contentString, count) {
+		google.maps.event.addListener(marker, 'click', (function (marker,contentString) {
 			return function () {
-				map.setZoom(15);
-				map.setCenter(marker.getPosition());
+                              window.setTimeout(function() {
+                                map.panTo(marker.getPosition());
+                              }, 500);
+                              
+                              var ids = marker.ids;
+                               var img = marker.img;
+                              //alert(ids);
+				map.setZoom(20);
+				
 				$("ul#myDIV > li").removeClass("active");
+                                map.setCenter(marker.getPosition());
 				infowindow.setContent(contentString);
 				infowindow.open(map, marker);
-				document.getElementById("linkbtn" + id).className = "active";
+				document.getElementById("linkbtn" + ids).className = "active";
+                                window.setTimeout (function(){
+                               
+                                $("#map_image"+ids).attr("src",img); 
+                                $("#map_image"+ids).fadeIn('slow');
+                                
+                            }, 1000);
+                
 
 			};
-		})(marker,contentString, count));
+		})(marker,contentString,count));
 
 	}
 }
 
-function setIcon(category){
+            function setIcon(category){
 
-var fields = category.split('-');
-var HTML = '';
-var img1 = fields[0]+'.png';
-HTML += '<li><img src="<?=IMAGES_BASE_URL?>/'+img1+'"></li>';
-if (fields[1]){
-  var img2 = fields[1]+'.png';
-HTML += '<li><img src="<?=IMAGES_BASE_URL?>/'+img2+'"></li>';  
-}
+            var fields = category.split('-');
+            var HTML = '';
+            var img1 = fields[0]+'.png';
+            HTML += '<li><img src="<?=IMAGES_BASE_URL?>/'+img1+'"></li>';
+            if (fields[1]){
+              var img2 = fields[1]+'.png';
+            HTML += '<li><img src="<?=IMAGES_BASE_URL?>/'+img2+'"></li>';  
+            }
 
-return HTML;
-}
+            return HTML;
+            }
+            function setImagesBy(id,images){
+            setTimeout(function(){ $("#map_image"+id).attr("src",images); }, 500);
+            $("#map_image"+id).fadeIn('slow');
+            }
+            
+            
       </script>
-    <script async defer
+        <script async defer
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD4zysKrYdrgo8t8Ed4wtgtNBEwpms79qY&callback=initMap">
     </script>
     </head>
@@ -333,40 +356,51 @@ return HTML;
         <?php include 'include/vheader.php';?>
         <section id="home" class="p-0 inner-match-height md-no-padding-bottom" data-stellar-background-ratio="0.5">
             <div class="opacity-extra-medium"></div>
+            
             <video id="vidbg" autoplay="" muted class="" poster="">
                
                 
             </video>
         </section>
+        
+        <?php 
+            if($ListSejarah){
+              $i=0;
+                foreach($ListSejarah as $pg){
+                $i++; 
+
+               $child=array();
+                 foreach ($pg['content'] as $key => $sc) {
+                  if(@$sc['slider']){
+                     $child = $sc['slider'];
+                  }
+                 } 
+        ?> 
+                     
+               
+           
        <section class="padding-50px-all wow fadeIn position-relative cover-background background-position-top" style="background-image: url('<?= IMAGES_BASE_URL;?>/bg_perjalanan.jpg');">
                 <div class="container">
                     <div class="row justify-content-right">
                     <div class="offset-lg-1 col-12 col-lg-8 text-xs-center text-right">
                         <div class="w-100">
-                            <img src="<?= IMAGES_BASE_URL;?>/made_indonesia.png" width="300" alt="aku_indonesia">
+                            <img src="<?= html_entity_decode(contentValue($pg, 'images'));?>" width="300" alt="aku_indonesia">
                         </div>
                     </div>
                 </div>
                  
                     <div class="row align-items-center padding-10px-all"> 
                         <div class="col-12 col-lg-5 md-margin-15px-bottom">
-                           <h6 class="font-weight-600 alt-font text-extra-dark-gray">60 Tahun Perjalanan Cawang</h6>
-                            <p>Cawang merupakan merk dagang Indonesia yang ada sejak tahun 1954. Produk pertama yang di produksi oleh merk ini adalah Radio Transistor yang begitu dikenal luas oleh masyarakat Indonesia. Tak hanya itu saja, “Tjawang” juga memproduksi televisi pertama karya anak bangsa yang bersejarah dalam ajang “Asian Games ke-4” tahun 1962 di Indonesia.</p>
-                            <p>Kini, Cawang kembali hadir dengan produk baru untuk menjawab kebutuhan Indonesia. Cawang AC Pro merupakan AC yang memiliki keunggulan untuk memberikan rasa nyaman dan ramah lingkungan dengan harga yang terjangkau.</p>
+                           <h6 class="font-weight-600 alt-font text-extra-dark-gray"><?= html_entity_decode(contentValue($pg, 'title'));?></h6>
+                            <p><?= html_entity_decode(contentValue($pg, 'desc'));?></p>
                             <a href="<?= BASE_URL;?>/perjalanan" title="60 tahun perjalanan cawang" class="btn btn-small btn-rounded btn-primary" style="margin-top:30px">Ikuti Perjalanan Cawang</a>
                         </div>
                         <div class="col-12 col-lg-7 p-0">
                         <div class="right-swipe swiper-full-screen swiper-container white-move">
                             <div class="swiper-wrapper">
-                           <div class="swiper-slide text-center"><img src="<?= IMAGES_BASE_URL;?>/sejarah-image-1-opt.png" alt="" data-no-retina=""></div>
-                           <div class="swiper-slide text-center"> <img src="<?= IMAGES_BASE_URL;?>/sejarah-image-2-opt.png" alt="" data-no-retina=""></div>
-                           <div class="swiper-slide text-center"> <img src="<?= IMAGES_BASE_URL;?>/sejarah-image-3-opt.png" alt="" data-no-retina=""></div>
-                           <div class="swiper-slide text-center"> <img src="<?= IMAGES_BASE_URL;?>/sejarah-image-4-opt.png" alt="" data-no-retina=""></div>
-                           <div class="swiper-slide text-center"> <img src="<?= IMAGES_BASE_URL;?>/sejarah-image-5-opt.png" alt="" data-no-retina=""></div>
-                           <div class="swiper-slide text-center"> <img src="<?= IMAGES_BASE_URL;?>/sejarah-image-6-opt.png" alt="" data-no-retina=""></div>
-                          <div class="swiper-slide text-center"> <img src="<?= IMAGES_BASE_URL;?>/sejarah-image-7-opt.png" alt="" data-no-retina=""></div>
-                          <div class="swiper-slide text-center"> <img src="<?= IMAGES_BASE_URL;?>/sejarah-image-8-opt.png" alt="" data-no-retina=""></div>
-                          <div class="swiper-slide text-center"> <img src="<?= IMAGES_BASE_URL;?>/sejarah-image-9-opt.png" alt="" data-no-retina=""></div>
+                        <?php  foreach ($child as $ch) { ?>      
+                           <div class="swiper-slide text-center"><img src="<?= html_entity_decode(contentValue($ch, 'slider_images'));?>" alt="<?= html_entity_decode(contentValue($ch, 'title_slider'));?>" data-no-retina=""></div>
+                          <?php } ?>
                         </div>  
                         
                     </div>
@@ -374,7 +408,7 @@ return HTML;
                     </div>
                 </div>
             </section> 
-        
+         <?php  }} ?>
         <!-- start tab style 04 section -->
         <section class="wow fadeIn padding-50px-all">
             <div class="container tab-style4">
@@ -389,85 +423,39 @@ return HTML;
                     <div class="col-12 col-lg-2 col-md-3 pr-0 position-relative z-index-1">
                         <!-- start tab navigation -->
                         <ul class="nav nav-tabs alt-font text-uppercase text-small font-weight-600">
-                            <li class="nav-item"><a class="nav-link active" href="#tab-four1" data-toggle="tab">Anti Bocor & Karat</a></li>
-                            <li class="nav-item"><a class="nav-link" href="#tab-four2" data-toggle="tab">Aman Korsleting</a></li>
-                            <li class="nav-item"><a class="nav-link" href="#tab-four3" data-toggle="tab">Proteksi Kebakaran</a></li>
-                            <li class="nav-item"><a class="nav-link" href="#tab-four4" data-toggle="tab">Suara Mesin Halus</a></li>
-                            <li class="nav-item"><a class="nav-link" href="#tab-four5" data-toggle="tab">Instalasi Dimana Pun</a></li>
+                            <?php 
+                            if($ListInovasi){
+                              $i=0;
+                            foreach($ListInovasi as $in){
+                            $i++; 
+                            ?> 
+                                <li class="nav-item"><a class="nav-link <?php if($i==1){ echo 'active';}?>" href="#inovasi<?=$in['row_id'];?>" data-toggle="tab"><?= html_entity_decode(contentValue($in, 'title'));?></a></li>
+                           <?php  }} ?>
                         </ul>
                         <!-- end tab navigation -->
                     </div>
                     <div class="col-12 col-lg-10 col-md-9 pl-0">
                         <div class="tab-content">
                             <!-- start tab content -->
-                            <div class="tab-pane med-text fade in active show" id="tab-four1">
+                             <?php 
+                            if($ListInovasi){
+                              $i=0;
+                            foreach($ListInovasi as $in){
+                            $i++; 
+                            ?> 
+                            <div class="tab-pane med-text fade in  <?php if($i==1){ echo 'active show';}?>" id="inovasi<?=$in['row_id'];?>">
                                 <div class="row align-items-center">
                                     <div class="col-12 col-md-6 sm-margin-30px-bottom">
-                                        <img src="<?= IMAGES_BASE_URL;?>/coating-u.png" alt="" class="w-100">
+                                        <img src="<?= html_entity_decode(contentValue($in, 'images'));?>" alt="<?= html_entity_decode(contentValue($in, 'title'));?>" class="w-100">
                                     </div>
                                     <div class="col-12 col-lg-5 col-md-6 offset-lg-1">
-                                        <h6 class="alt-font font-weight-700 text-extra-dark-gray margin-20px-bottom text-uppercase">Anti Bocor & Karat</h6>
-                                        <span class="text-extra-large text-extra-dark-gray margin-20px-bottom d-block">Lapisan Pengaman yang membuat AC Lebih Tahan Lama</span>
-                                        <p>Cawang AC Pro memiliki U Bend yang dilapisi oleh coating sehingga lebih tahan karat dan aman  dari kebocoran. Sedangkan merk lain U Bend tidak dilapisi coating sehingga tidak tahan karat dan rawan kebocoran.</p>
+                                        <h6 class="alt-font font-weight-700 text-extra-dark-gray margin-20px-bottom text-uppercase"><?= html_entity_decode(contentValue($in, 'right_title'));?></h6>
+                                        <span class="text-extra-large text-extra-dark-gray margin-20px-bottom d-block"><?= html_entity_decode(contentValue($in, 'sub_title'));?></span>
+                                        <p><?= html_entity_decode(contentValue($in, 'desc'));?></p>
                                     </div>
                                 </div>
                             </div>
-                            <!-- end tab content -->
-                            <!-- start tab content -->
-                            <div class="tab-pane fade in" id="tab-four2">
-                                <div class="row align-items-center">
-                                    <div class="col-12 col-md-6 sm-margin-30px-bottom">
-                                        <img src="<?= IMAGES_BASE_URL;?>/silicon.png" alt="" class="w-100">
-                                    </div>
-                                    <div class="col-12 col-lg-5 col-md-6 offset-lg-1">
-                                        <h6 class="alt-font font-weight-700 text-extra-dark-gray margin-20px-bottom text-uppercase">Aman Korsleting</h6>
-                                        <span class="text-extra-large text-extra-dark-gray margin-20px-bottom d-block">Lapisan Silikon yang membuat AC menjadi Lebih Aman</span>
-                                        <p>Cawang AC Pro terlindungi dari bahaya korsleting karena PCB dilapisi oleh silicon. Sedangkan merk lain rentan korsleting & arus pendek listrik karena PCB tidak dilapisi silicon.</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- end tab content -->
-                            <!-- start tab content -->
-                            <div class="tab-pane fade in" id="tab-four3">
-                                <div class="row align-items-center">
-                                    <div class="col-12 col-md-6 sm-margin-30px-bottom">
-                                        <img src="<?= IMAGES_BASE_URL;?>/alumunium-fire-protection.png" alt="" class="w-100">
-                                    </div>
-                                    <div class="col-12 col-lg-5 col-md-6 offset-lg-1">
-                                        <h6 class="alt-font font-weight-700 text-extra-dark-gray margin-20px-bottom text-uppercase">Proteksi Kebakaran</h6>
-                                        <span class="text-extra-large text-extra-dark-gray margin-20px-bottom d-block">Terdapat lapisan alumunium yang tahan percikan api</span>
-                                        <p>Cawang AC Pro memiliki terminal board cover yang dilapisi aluminium foil sehingga tahan api. Sedangkan merk lain terminal board cover hanya berupa plastik, sehingga berbahaya jika ada percikan api.</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- end tab content -->
-                            <!-- start tab content -->
-                            <div class="tab-pane fade in" id="tab-four4">
-                                <div class="row align-items-center">
-                                    <div class="col-12 col-md-6 sm-margin-30px-bottom">
-                                        <img src="<?= IMAGES_BASE_URL;?>/kipas_ac_opt.png" alt="" class="w-100">
-                                    </div>
-                                    <div class="col-12 col-lg-5 col-md-6 offset-lg-1">
-                                        <h6 class="alt-font font-weight-700 text-extra-dark-gray margin-20px-bottom text-uppercase">Tidak Berisik</h6>
-                                        <span class="text-extra-large text-extra-dark-gray margin-20px-bottom d-block"><i>Dimple</i> pada kipas yang dapat meredam kebisingan AC</span>
-                                        <p>Cawang AC Pro memiliki dimple (lubang kecil-kecil) pada kipas sehingga mengurangi suara berisik saat AC  beroperasi. Sedangkan AC merk lain tidak memiliki dimple pada kipas yang membuat suara berisik saat AC beroperasi.</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- end tab content -->
-                            <!-- start tab content -->
-                            <div class="tab-pane fade in" id="tab-four5">
-                                <div class="row align-items-center">
-                                    <div class="col-12 col-md-6 sm-margin-30px-bottom">
-                                        <img src="<?= IMAGES_BASE_URL;?>/flexible_instalation.jpg" alt="" class="w-100">
-                                    </div>
-                                    <div class="col-12 col-lg-5 col-md-6 offset-lg-1">
-                                        <h6 class="alt-font font-weight-700 text-extra-dark-gray margin-20px-bottom text-uppercase">Pasang Dimana Pun</h6>
-                                        <span class="text-extra-large text-extra-dark-gray margin-20px-bottom d-block">Dengan panjang pipa mencapai 20m, maka outdoor unit dapat dipasang di mana saja tanpa batas</span>
-                                        <p>Cawang AC Pro memiliki pipa dengan panjang 20m sehingga unit indoor AC dapat dipasang sesuai keinginan. Sedangakan AC merk lain memiliki pipa dengan panjang maksimal 15m yang membuat unit indoor dan outdoor AC dipasang dengan jarak berdekatan.</p>
-                                    </div>
-                                </div>
-                            </div>
+                             <?php  }} ?>
                             <!-- end tab content -->
                         </div>
                     </div>       
@@ -490,45 +478,28 @@ return HTML;
                     <div class="col-12 col-lg-8">
                         <div class="row align-items-center margin-25px-bottom">
                             <!-- start features box item -->
-                            <a href="<?= BASE_URL?>/products/1" title="" class="hover-zoom col-6 col-md-3 text-center wow zoomIn" data-wow-delay="0.4s">
+                                        <?php if($countProducts > 0){
+                                                         $i=0;
+                                                        foreach($Products as $hp){  $i++; 
+                                                        $i++;
+                                                        if ($hp['row_alias'] !=''){                          
+                                                            $ref =BASE_URL.'/'.$hp['row_alias'];
+                                                            }                       
+                                                            else {                          
+                                                         $ref = BASE_URL.'/products/'.$hp['row_id'];           
+                                                         } 
+                                                        ?>
+                            <a href="<?= $ref?>" title="" class="hover-zoom col-6 col-md-3 text-center wow zoomIn" data-wow-delay="0.4s">
                                 <div class="float-left padding-nine-left">
-                                     <h6 class="text-light-blue font-weight-600 margin-three-bottom">1/2 PK</h6>
-                                    <span class="text-medium text-extra-dark-gray alt-font d-block">5000 Btu/H</span>
+                                     <h6 class="text-light-blue font-weight-600 margin-three-bottom"><?= html_entity_decode(contentValue($hp, 'title'));?></h6>
+                                    <span class="text-medium text-extra-dark-gray alt-font d-block"><?= html_entity_decode(contentValue($hp, 'btu'));?> Btu/H</span>
                                     <div class="separator-line-horrizontal-medium-light2 bg-extra-medium-gray d-inline-block"></div>
-                                    <p class="p-0 text-small">EP-SN-5SGM</p>
+                                    <p class="p-0 text-small"><?= html_entity_decode(contentValue($hp, 'ep'));?></p>
                                 </div>
                             </a>
+                             <?php }}?>   
                             <!-- end features box item -->
-                            <!-- start features box item -->
-                            <a href="<?= BASE_URL?>/products/2" title="" class="hover-zoom col-6 col-md-3 text-center wow zoomIn" data-wow-delay="0.4s">
-                                <div class="float-left padding-nine-left">
-                                     <h6 class="text-light-blue font-weight-600 margin-three-bottom">3/4 PK</h6>
-                                    <span class="text-medium text-extra-dark-gray alt-font d-block">7000 Btu/H</span>
-                                    <div class="separator-line-horrizontal-medium-light2 bg-extra-medium-gray d-inline-block"></div>
-                                    <p class="p-0 text-small">EP-SN-7SGM</p>
-                                </div>
-                            </a>
-                            <!-- end features box item -->
-                            <!-- start features box item -->
-                            <a href="<?= BASE_URL?>/products/3" title="" class="hover-zoom col-6 col-md-3 text-center wow zoomIn" data-wow-delay="0.4s">
-                                <div class="float-left padding-nine-left">
-                                     <h6 class="text-light-blue font-weight-600 margin-three-bottom">1 PK</h6>
-                                    <span class="text-medium text-extra-dark-gray alt-font d-block">9000 Btu/H</span>
-                                    <div class="separator-line-horrizontal-medium-light2 bg-extra-medium-gray d-inline-block"></div>
-                                    <p class="p-0 text-small">EP-SN-9SGM</p>
-                                </div>
-                            </a>
-                            <!-- end features box item -->
-                            <!-- start features box item -->
-                            <a href="<?= BASE_URL?>/products/4" title="" class="hover-zoom col-6 col-md-3 text-center wow zoomIn" data-wow-delay="0.6s" title="">
-                               <div class="float-left padding-nine-left">
-                                    <h6 class="text-light-blue font-weight-600 margin-three-bottom">1 1/2 PK</h6>
-                                    <span class="text-medium text-extra-dark-gray alt-font d-block">12000 Btu/H</span>
-                                    <div class="separator-line-horrizontal-medium-light2 bg-extra-medium-gray d-inline-block"></div>
-                                    <p class="p-0 text-small">EP-SN-12GM</p>
-                                </div>
-                            </a>
-                            <!-- end features box item -->
+                            
                         </div>
                     </div>
                 </div> 
@@ -622,8 +593,7 @@ return HTML;
                 </div>
             </div>
         </section>
-        
-         <section class="wow fadeIn padding-10px-all" style="" id="lokasi">
+          <section class="wow fadeIn padding-50px-all" id="lokasi">
             <div class="container">
                 <div class="row flex-lg-row-reverse"> 
                 
@@ -639,7 +609,7 @@ return HTML;
                      <div class="d-inline-block width-100 margin-15px-tb">
                          <label class="text-small">Temukan Kami di</label>
                             <div class="position-relative">
-                                    <input id="input-search" type="text" class="bg-transparent text-small m-0 border-color-extra-light-gray medium-input float-left" placeholder="nama kota / daerah">                                   
+                                    <input id="input-search" type="text" class="bg-transparent text-small m-0 border-color-extra-light-gray medium-input float-left" placeholder="Nama kota / daerah">                                   
                                     <button id="submit-search" type="submit" class="search-btn bg-primary btn position-absolute right-0 top-1"><i class="fas fa-search no-margin-left"></i></button>
                             </div> 
                         </div>
@@ -768,13 +738,13 @@ return HTML;
                         if (w.matches) {
                             vid1.pause();
                             source1.removeAttribute("src");
-                            source1.setAttribute("src", "<?= VIDEO_BASE_URL; ?>/mobilevid.mp4");
+                            source1.setAttribute("src", "<?= html_entity_decode(contentValue($ListBanner[0], 'video_hp'));?>");
                             vid1.load();
                             vid1.play();
                         } else {
                             vid1.pause();
                             source1.removeAttribute("src");
-                            source1.setAttribute("src", "<?= VIDEO_BASE_URL; ?>/bg_video.mp4");
+                            source1.setAttribute("src", "<?= html_entity_decode(contentValue($ListBanner[0], 'video'));?>");
                             vid1.load();
                             vid1.play();
                         }
@@ -786,12 +756,12 @@ return HTML;
                         
                             if (w.matches) {
                                 vid1.pause();
-                                source1.src = "<?= VIDEO_BASE_URL; ?>/mobilevid.mp4";
+                                source1.src = "<?= html_entity_decode(contentValue($ListBanner[0], 'video_hp'));?>";
                                 vid1.load();
                                 vid1.play();
                             } else {
                                 vid1.pause();
-                                source1.src = "<?= VIDEO_BASE_URL; ?>/bg_video.mp4";
+                                source1.src = "<?= html_entity_decode(contentValue($ListBanner[0], 'video'));?>";
                                 vid1.load();
                                 vid1.play();
                             }

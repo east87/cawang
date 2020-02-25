@@ -37,16 +37,15 @@
                     <div class="row">
                         <div class="col-lg-4 col-md-6 widget border-right border-color-medium-light-gray md-no-border-right md-margin-30px-bottom sm-text-center">
                             <!-- start logo -->
-                            <a href="<?= BASE_URL;?>" class="margin-20px-bottom d-inline-block"><img class="footer-logo" src="<?= IMAGES_BASE_URL;?>/logo-footer.png" data-rjs="<?= IMAGES_BASE_URL;?>/logo-footer.png" alt="Cawang AC Pro" style="max-height: 35px; margin-bottom: 15px;"></a>
+                            <a href="<?= BASE_URL;?>" class="margin-20px-bottom d-inline-block"><img class="footer-logo" src="<?= html_entity_decode(contentValue($Footer[0], 'logo_footer'));?>" data-rjs="<?= html_entity_decode(contentValue($Footer[0], 'logo_footer'));?>" alt="Cawang AC Pro" style="max-height: 35px; margin-bottom: 15px;"></a>
                             <!-- end logo -->
-                            <p class="text-small width-95 sm-width-100">Cawang merupakan produk Indonesia yang memiliki keunggulan setara dengan teknologi Jepang. Diproduksi sendiri oleh anak bangsa, Cawang tak kalah inovatif dengan merk lain.</p> 
-                            <p class="text-small width-95 sm-width-100">Sejak berdiri, Cawang terus memberikan produk berkualitas tinggi dengan harga yang terjangkau demi memenuhi kebutuhan masyarakat Indonesia.</p>
+                            <p class="text-small width-95 sm-width-100"><?= html_entity_decode(contentValue($Footer[0], 'about_footer'));?></p>
                             <!-- start social media -->
                            <div class="social-icon-style-8 d-inline-block vertical-align-middle">
                                 <ul class="small-icon mb-0">
-                                    <li><a class="instagram" href="https://instagram.com/cawang.id" target="_blank"><i class="fab fa-instagram mr-0 text-light-blue" aria-hidden="true"></i></a></li>                                  
-                                    <li><a class="facebook" href="https://www.facebook.com/cawang.id" target="_blank"><i class="fab fa-facebook-f text-light-blue" aria-hidden="true"></i></a></li>
-                                    <li><a class="whatsapp" href="https://api.whatsapp.com/send?phone=+6281250003440" target="_blank"><i class="fab fa-whatsapp mr-0 text-light-blue" aria-hidden="true"></i></a></li>
+                                    <li><a class="instagram" href="<?= html_entity_decode(contentValue($Footer[0], 'ig'));?>" target="_blank"><i class="fab fa-instagram mr-0 text-light-blue" aria-hidden="true"></i></a></li>                                  
+                                    <li><a class="facebook" href="<?= html_entity_decode(contentValue($Footer[0], 'fb'));?>" target="_blank"><i class="fab fa-facebook-f text-light-blue" aria-hidden="true"></i></a></li>
+                                    <li><a class="whatsapp" href="https://api.whatsapp.com/send?phone=<?= html_entity_decode(contentValue($Footer[0], 'wa'));?>" target="_blank"><i class="fab fa-whatsapp mr-0 text-light-blue" aria-hidden="true"></i></a></li>
                                 </ul>
                             </div>
                             <!-- end social media -->
@@ -57,19 +56,17 @@
                         <!-- start contact information -->
                         <div class="col-lg-4 col-md-6 widget border-right border-color-medium-light-gray padding-45px-left md-padding-15px-left md-clear-both md-no-border-right sm-margin-30px-bottom text-center text-md-left">
                             <!-- start logo -->
-                            <a href="https://www.gdn.co.id/" class="margin-20px-bottom d-inline-block"><img class="footer-logo" src="<?= IMAGES_BASE_URL;?>/logo_gobel.png" data-rjs="<?= IMAGES_BASE_URL;?>/logo_gobel.png" alt="Gobel Dharma Nusantara" style="max-height: 45px;"></a>
-                            <div class="widget-title alt-font text-small text-extra-dark-gray text-uppercase margin-10px-bottom font-weight-600">Dibuat oleh PT. Panasonic Manufacturing Indonesia</div>
+                            <a href="https://www.gdn.co.id/" class="margin-20px-bottom d-inline-block"><img class="footer-logo" src="<?= html_entity_decode(contentValue($Footer[0], 'logo_gdn'));?>" data-rjs="<?= html_entity_decode(contentValue($Footer[0], 'logo_gdn'));?>" alt="Gobel Dharma Nusantara" style="max-height: 45px;"></a>
+                            <div class="widget-title alt-font text-small text-extra-dark-gray text-uppercase margin-10px-bottom font-weight-600"><?= html_entity_decode(contentValue($Footer[0], 'title_gdn'));?></div>
                             <!-- end logo -->
                             <div class="widget-title alt-font text-small text-medium-gray text-uppercase margin-10px-bottom font-weight-500">HUBUNGI KAMI</div>
                             <p class="text-small d-block margin-15px-bottom width-80 sm-width-100">
-                                PT. Gobel Dharma Nusantara<br>
-                                Jl. Dewi Sartika No. 14 (Cawang II)<br> 
-                                Jakarta 13630 - Indonesia
+                             <?= html_entity_decode(contentValue($Footer[0], 'address'));?>
                             </p>
-                            <div class="text-small">Call Center  : <a href="tel:+62218015666">+62 21 8015 666</a></div> 
-                            <div class="text-small">Email : <a href="mailto:cawang@gdn.co.id">cawang@gdn.co.id</a></div>
-                            <div class="text-small">Pusat Layanan : <a href="tel:+6281250003440">+62 812 5000 3440</a></div>
-                            <div class="text-small">Fax : <a href="tel:+62218015675">+62 21 8015 675</a></div>
+                            <div class="text-small">Call Center  : <a href="tel:<?= html_entity_decode(contentValue($Footer[0], 'call_center'));?>"><?= html_entity_decode(contentValue($Footer[0], 'call_center'));?></a></div> 
+                            <div class="text-small">Email : <a href="mailto:<?= html_entity_decode(contentValue($Footer[0], 'email'));?>"><?= html_entity_decode(contentValue($Footer[0], 'email'));?></a></div>
+                            <div class="text-small">Pusat Layanan : <a href="tel:<?= html_entity_decode(contentValue($Footer[0], 'pusat_layanan'));?>"><?= html_entity_decode(contentValue($Footer[0], 'pusat_layanan'));?></a></div>
+                            <div class="text-small">Fax : <a href="tel:<?= html_entity_decode(contentValue($Footer[0], 'fax'));?>"><?= html_entity_decode(contentValue($Footer[0], 'fax'));?></a></div>
                             
                            
                         </div>
@@ -94,7 +91,7 @@
                                         'callback': null,
                                         'styling': true,
                                         'items': 12,
-                                        'items_per_row': 4,
+                                        'items_per_row': 3,
                                         'margin': 0.50
                                     });
 

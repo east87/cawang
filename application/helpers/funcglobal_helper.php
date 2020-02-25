@@ -72,8 +72,11 @@ if( ! function_exists('contentValue')){
                 foreach ($opts as $key => $val) {
                   $result[] = generateNameLabel(getOptions($val ,$value['label_id'])).'';
                 }   
-                    
                 return implode("-" ,$result);
+                }
+                if ($value['type_id']==10)  {
+                //return BASE_URL.str_replace('/admin/images','/admin/.thumbs/images',$value['content_text']);
+                return $value['content_text'];
                 }
                 return $value['content_text'];
                 }
@@ -265,6 +268,43 @@ function formGenerate($controller,$ListLabel){
                 $html_output .= '</div>';
                 $html_output .= '</div>';
             }
+             else if ($label['type_id']==10) { 
+                $content_file_thumbs = BASE_URL.('/admin'.$label['content_text']);
+                $content_file = BASE_URL.$label['content_text'];
+                $html_output .= '<div class="form-group m-form__group row">
+                                <label class="col-lg-2 col-form-label">
+                                 '.$controller.' '.$label['label_title'].':
+                                </label>
+                                <div class="col-lg-6">                       
+                                <div style="margin-bottom:10px;" class="'.$label['label_name'].'">
+                                  <i class="icon--lg flaticon-open-box"></i>                        
+                                </div>
+                                   <input type="text" name="'.$label['label_name'].'" readonly="'.$label['label_name'].'" id="'.$label['label_name'].'" class="form-control" value="'.$content_file.'">
+                                   <p class="help-block" style="color:#00F;">'.$label['label_notif'].'</p>
+                                   <div style="margin-right:10px;">
+                                    <a data-toggle="modal"  href="javascript:;" data-target="#Modal'.$label['label_name'].'" onClick="openKCFinder(&#39;'.$label['label_name'].'&#39;);" class="btn btn-outline-brand m-btn m-btn--icon m-btn--icon-only m-btn--outline-2x" id="link-file" class="link"><i class="flaticon-attachment"></i></a>
+                                    <a class="btn btn-outline-brand m-btn m-btn--icon m-btn--icon-only m-btn--outline-2x" onClick="reset_value(&#39;'.$label['label_name'].'&#39;);" id="link-file" class="link"><i class="fa fa-refresh"></i></a>
+                                   </div>
+                                </div>
+                             </div>';
+                $html_output .='<div class="modal fade" id="Modal'.$label['label_name'].'" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" >
+                                <div class="modal-dialog modal-lg" role="document">
+                                        <div class="modal-content">
+                                                <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                <span aria-hidden="true">
+                                                                        &times;
+                                                                </span>
+                                                        </button>
+                                                </div>
+                                            <div class="modal-body">'; 
+                $html_output .='<iframe class="filemanager" src="'.TOOLS_BASE_URL.'/filemanager/dialog.php?type=3&field_id='.$label['label_name'].'&#39;&akey=2063c1608d6e0baf80249c42e2be5804&fldr=" frameborder="0" style="overflow: scroll; overflow-x: hidden; overflow-y: scroll; "></iframe>
+                                        </div>
+                                        </div>
+                                </div>
+                </div>'; 
+                    
+            }
         }
     return $html_output;
 }
@@ -329,7 +369,13 @@ function resultData($content,$controller){
         
                 $html_output .='</td>';
            }
-           
+             else if ($value['type_id']== 10) {
+                        $html_output .='<td>'; 
+                        $html_output .='<a href="'.$value['content_text'].'">';
+                        $html_output .=$value['content_text'];
+                        $html_output .='</a>';
+                        $html_output .='</td>';
+                   }
             else  {
             $html_output .='<td>'.$value['content_text'];
             $html_output .='</td>';
@@ -375,9 +421,9 @@ if( ! function_exists('getOptions')){
 }
 if( ! function_exists('generateNameLabel')){
 	function generateNameLabel($label){
-		$label = strtolower($label);
+		 $label = strtolower($label);
 		
-		$strSearch = array(" ","  ","_","-","");
+		$strSearch = array(" ","  ","_","-",""," & ","&");
 		$label = str_replace($strSearch, "_", $label);
 		$strSearchNew = array("!","@","#","$","%","^","&amp;","*","(",")","+","|","’","‘","”",
 						"{","}","[","]",":",";","\'","\"","<",">",",",".","?","\/","*(",

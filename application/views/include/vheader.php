@@ -1,26 +1,33 @@
 <?php 
-    $ci =& get_instance();
-    $ci->load->model('web/Model_content');
-    $ListSosmed =array();
-    $ListLoc =array();
-    
-    $sosmed=121;
-    $string =$sosmed;
-    $arrayin=array_map('intval', explode(',', $string));
-    $where_in = implode(",",$arrayin);
-    $order_sosmed='';
-    $order_sosmed .= " order by a.row_order ASC";
-    $order_sosmed .= " limit  0, 8";
-    $whereSosmed = '';
-    $whereSosmed .= " WHERE a.row_active_status=1 and a.row_active_status=1 and a.row_parent=0 and a.module_id in(".$where_in.") ";            
-    $ListSosmedAll = $ci->Model_content->getListContent($whereSosmed,$order_sosmed);        
-    foreach ($ListSosmedAll as $lc){
-                    if ($lc['module_id']== $sosmed){
-                        $ListSosmed[]=$lc; 
-                        $countSosmed = count($ListSosmed);
-                    } 
-                }
-    ?>
+   
+$ci =& get_instance();
+$ci->load->model('web/Model_content');
+$Products =array();
+$Footer =array();
+$conf= '122 , 121';
+$string =$conf;
+$arrayin=array_map('intval', explode(',', $string));
+$where_in = implode(",",$arrayin);
+$order_conf='';
+$order_conf .= " order by a.row_order ASC";
+$label_page =1;
+$order_conf .= " limit  0,5";
+$whereconf = '';
+$whereconf .= " WHERE a.row_active_status=1 and a.row_active_status=1 and a.row_parent=0 and a.module_id in(".$where_in.") ";            
+$ListconfAll = $ci->Model_content->getListContent($whereconf,$order_conf,$label_page);        
+foreach ($ListconfAll as $lc){
+if ($lc['module_id']== 122 ){
+$Products[]=$lc; 
+$countProducts= count($Products);
+} 
+if ($lc['module_id']== 121){
+$Footer[]=$lc; 
+$countFoot = count($Footer);
+}
+//echo '<pre>';
+//print_r($Products);
+}
+?> 
   <!-- start header -->
         <header>
         <meta name="theme-color" content="#FF0000" />
@@ -52,7 +59,7 @@
 										
                                             <li class="mega-menu-column col-lg-6 cover-background" style="background-image:url('<?= IMAGES_BASE_URL;?>/buatan_indonesia.jpg');">
                                                 <a href="<?= BASE_URL;?>/perjalanan" title="perjalanan">
-												<ul> 
+                                                <ul> 
                                                     <li class="li-min-h  dropdown-header margin-20px-top li-first">
                                                         
                                                             <span class="text-light-blue text-small decoration-underline alt-font font-weight-600">60 Tahun <br> Perjalanan Cawang</span>
@@ -61,7 +68,7 @@
                                                       
                                                      </li>
                                                 </ul>
-											  </a>
+                                                </a>
                                             </li>
 											
                                             <li class="mega-menu-column col-lg-6 cover-background" style="background-image:url('<?= IMAGES_BASE_URL;?>/inovasi.jpg'); margin-bottom: 10px;">
@@ -114,38 +121,28 @@
                                                         <span class="text-small decoration-underline alt-font font-weight-600">Cawang AC Pro</span>
                                                         <span class="separator-line-horrizontal-medium-light2 bg-extra-medium-gray d-table mx-auto width-100px"></span>
                                                     </li>
+                                                    <?php if($countProducts > 0){
+                                                        $i=0;
+                                                        foreach($Products as $hp){  $i++; 
+                                                        $i++;
+                                                        if ($hp['row_alias'] !=''){                          
+                                                            $ref =BASE_URL.'/'.$hp['row_alias'];
+                                                            }                       
+                                                            else {                          
+                                                         $ref = BASE_URL.'/productss/'.$hp['row_id'];           
+                                                         } 
+                                                        ?>
                                                     <li>
-                                                    <a href="<?= BASE_URL?>/products/1" title="">
+                                                    <a href="<?= $ref;?>" title="">
                                                     <div class="d-flex align-items-center margin-15px-bottom alt-font">
-                                                         <span class="text-large text-extra line-height-normal font-weight-600 width-40">1/2 PK</span>                  
-                                                         <div class="char-value width-60"><span class="text-extra-small font-weight-400">EP/EU-SN-5SGM</span><br> <span class="text-medium-gray font-weight-500">5000 Btu/H</span></div>
+                                                         <span class="text-large text-extra line-height-normal font-weight-600 width-40"><?= html_entity_decode(contentValue($hp, 'title'));?></span>                  
+                                                         <div class="char-value width-60"><span class="text-extra-small font-weight-400"><?= html_entity_decode(contentValue($hp, 'ep'));?></span><br> <span class="text-medium-gray font-weight-500"><?= html_entity_decode(contentValue($hp, 'btu'));?> Btu/H</span></div>
                                                        </div>
                                                     </a>
                                                     </li>
-                                                   <li>
-                                                    <a href="<?= BASE_URL?>/products/2" title="">
-                                                    <div class="d-flex align-items-center margin-15px-bottom alt-font">
-                                                         <span class="text-large text-extra line-height-normal font-weight-600 width-40">3/4 PK</span>                  
-                                                         <div class="char-value width-60"><span class="text-extra-small font-weight-400">EP/EU-SN-7SGM</span><br> <span class="text-medium-gray font-weight-500">7000 Btu/H</span></div>
-                                                       </div>
-                                                    </a>
-                                                    </li>
-                                                    <li>
-                                                    <a href="<?= BASE_URL?>/products/3" title="">
-                                                    <div class="d-flex align-items-center margin-15px-bottom alt-font">
-                                                         <span class="text-large text-extra line-height-normal font-weight-600 width-40">1 PK</span>                  
-                                                         <div class="char-value width-60"><span class="text-extra-small font-weight-400">EP/EU-SN-9SGM</span><br> <span class="text-medium-gray font-weight-500">9000 Btu/H</span></div>
-                                                       </div>
-                                                    </a>
-                                                    </li>
-                                                    <li>
-                                                    <a href="<?= BASE_URL?>/products/4">
-                                                    <div class="d-flex align-items-center margin-15px-bottom alt-font">
-                                                         <span class="text-large text-extra line-height-normal font-weight-600 width-40">1 1/2 PK</span>                  
-                                                         <div class="char-value width-60"><span class="text-extra-small font-weight-400">EP/EU-SN-12SGM</span><br> <span class="text-medium-gray font-weight-500">12000 Btu/H</span></div>
-                                                       </div>
-                                                    </a>
-                                                    </li>
+                                                     <?php }}?>   
+                                                    
+                                                   
                                                     
                                                 </ul>
                                             </li>
@@ -155,38 +152,27 @@
                                                         <span class="text-small text-white-2 decoration-underline alt-font font-weight-600">Ruangan</span>
                                                         <span class="separator-line-horrizontal-medium-light2 bg-extra-medium-gray d-table mx-auto width-100px"></span>
                                                     </li>
+                                                    
+                                                    <?php if($countProducts > 0){
+                                                         $i=0;
+                                                        foreach($Products as $hp){  $i++; 
+                                                        $i++;
+                                                        if ($hp['row_alias'] !=''){                          
+                                                            $ref =BASE_URL.'/'.$hp['row_alias'];
+                                                            }                       
+                                                            else {                          
+                                                         $ref = BASE_URL.'/productss/'.$hp['row_id'];           
+                                                         } 
+                                                        ?>
                                                     <li>
-                                                    <a href="<?= BASE_URL?>/products/1" title="">
+                                                    <a href="<?= $ref?>" title="">
                                                     <div class="d-flex align-items-center margin-15px-bottom alt-font">                 
-                                                         <div class="char-value width-100"><span class="text-white-2 text-large text-extra line-height-normal font-weight-600">Ruang Tidur</span>
-                                                             <br> <span class="text-white-2 font-weight-500">~16 m2</span></div>
+                                                         <div class="char-value width-100"><span class="text-white-2 text-large text-extra line-height-normal font-weight-600"><?= html_entity_decode(contentValue($hp, 'ruangan'));?></span>
+                                                             <br> <span class="text-white-2 font-weight-500">~<?= html_entity_decode(contentValue($hp, 'ukuran'));?> m<sup>2</sup></span></div>
                                                        </div>
                                                     </a>
                                                     </li>
-                                                   <li>
-                                                    <a href="<?= BASE_URL?>/products/2" title="">
-                                                    <div class="d-flex align-items-center margin-15px-bottom alt-font">                 
-                                                         <div class="char-value width-100"><span class="text-white-2 text-large text-extra line-height-normal font-weight-600">Ruang Keluarga</span>
-                                                             <br> <span class="text-white-2 font-weight-500">~25 m2</span></div>
-                                                       </div>
-                                                    </a>
-                                                    </li>
-                                                    <li>
-                                                    <a href="<?= BASE_URL?>/products/3" title="">
-                                                    <div class="d-flex align-items-center margin-15px-bottom alt-font">                 
-                                                         <div class="char-value width-100"><span class="text-white-2 text-large text-extra line-height-normal font-weight-600">Ruang Tamu</span>
-                                                             <br> <span class="text-white-2 font-weight-500">~36 m2</span></div>
-                                                       </div>
-                                                    </a>
-                                                    </li>
-                                                    <li>
-                                                    <a href="<?= BASE_URL?>/products/4">
-                                                    <div class="d-flex align-items-center margin-15px-bottom alt-font">                 
-                                                         <div class="char-value width-100"><span class="text-white-2 text-large text-extra line-height-normal font-weight-600">Ruang Pertemuan</span>
-                                                             <br> <span class="text-white-2 font-weight-500">~49 m2</span></div>
-                                                       </div>
-                                                    </a>
-                                                    </li>
+                                                     <?php }}?>   
                                                     
                                                 </ul>
                                             </li>

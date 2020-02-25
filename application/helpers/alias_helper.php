@@ -4,7 +4,7 @@ if( ! function_exists('generateAlias')){
 	function generateAlias($alias){
 		$alias = strtolower($alias);
 		
-		$strSearch = array(" ","  ","_","-","","&"," & ");
+		$strSearch = array(" ","  ","_","-","","&"," & ","/");
 		$alias = str_replace($strSearch, "-", $alias);
 		$strSearchNew = array("!","@","#","$","%","^","&amp;","*","(",")","+","|","’","‘","”",
 						"{","}","[","]",":",";","\'","\"","<",">",",",".","?","\/","*(",

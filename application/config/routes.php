@@ -113,15 +113,16 @@ foreach( $result as $row )
   }
 //  
 }
- $route['products/(:num)'] = "products/index/$1";
+ $route['products/(:any)'] = "products/index/$1";
  
 //die;
 //require_once(PATH."config/alias_routes.php");	
-$where2 = " alias_category='blog' or alias_category='armada'";
+$where2 = " alias_category='blog' or alias_category='products'";
 $query2 = $db->get_where( 'tbl_alias',$where2);
 $result2 = $query2->result();
 foreach( $result2 as $row )
 {
    $route[$row->web_alias] = $row->web_ori; 
 }
+//echo '<pre>';
 //print_r($result2);
